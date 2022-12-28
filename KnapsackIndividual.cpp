@@ -10,7 +10,7 @@ void KnapsackIndividual::mutate()
 
 }
 
-KnapsackIndividual* KnapsackIndividual::crossover(Individual& other)
+Individual* KnapsackIndividual::crossover(Individual& other)
 {
     return nullptr;
 }

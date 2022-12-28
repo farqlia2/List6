@@ -9,14 +9,14 @@ class KnapsackIndividual : Individual
 {
 public:
 	KnapsackIndividual(KnapsackProblem* problem, 
-		vector<int> genome) {
+		vector<int>&& genome) {
 		this->genome = genome; 
 		this->problem = problem; 
 	};
-	double getFitness();
-	void mutate(); 
-	vector<int>* getGenome() { return &genome; };
-	virtual KnapsackIndividual* crossover(Individual& other) override;
+	double getFitness() override;
+	void mutate() override;
+	vector<int>* getGenome() override { return &genome; };
+	Individual* crossover(Individual& other) override;
 private:
 	vector<int> genome;
 	KnapsackProblem* problem; 

@@ -1,11 +1,7 @@
 #include "Individual.h"
 
 Individual* Individual::crossover(Individual& other) {
-
-	Individual* children = new Individual[2];
-	children[0] = *this;
-	children[1] = other;
-	return children;
+    return nullptr;
 }
 
 double Individual::getFitness() { return 0; }

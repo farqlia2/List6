@@ -1,26 +1,28 @@
 #include "KnapsackProblem.h"
 
-KnapsackProblem::KnapsackProblem(vector<double> weights,
-	vector<double> values, double capacity) {
+KnapsackProblem::KnapsackProblem(vector<double>&& weights,
+	vector<double>&& values, double capacity) {
 	this->weights = weights;
 	this->values = values;
 	this->capacity = capacity;
 }
 
-KnapsackProblem* KnapsackProblem::create(vector<double> weights,
-	vector<double> values, double capacity)
+KnapsackProblem* KnapsackProblem::create(vector<double>&& weights,
+	vector<double>&& values, double capacity)
 {
-	if (validate) return new KnapsackProblem(weights, values, capacity);
+	if (validate(weights, values, capacity))
+        return new KnapsackProblem(std::move(weights), std::move(values), capacity);
+    return nullptr;
 }
 
-bool KnapsackProblem::validate(vector<double> weights,
-	vector<double> values, double capacity) {
+bool KnapsackProblem::validate(vector<double>& weights,
+	vector<double>& values, double capacity){
 	return true;
 }
 
-double KnapsackProblem::getFitness(Individual& ind) 
+double KnapsackProblem::getFitness(Individual* ind)
 {
-	vector<int> genome = *ind.getGenome();
+	vector<int> genome = *ind->getGenome();
 	double fitness = 0;
 	double weight = 0;
 	for (int gene = 0; gene < getSize(); gene++) {

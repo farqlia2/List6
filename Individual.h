@@ -2,6 +2,8 @@
 #include "Problem.h"
 #include "vector"
 
+using namespace std;
+
 class Individual
 {
 public:
