@@ -1,16 +1,16 @@
 #include "KnapsackIndividual.h"
 
-double KnapsackIndividual::getFitness()
+KnapsackIndividual::KnapsackIndividual(vector<int>&& genome) {
+    this->genome = genome;
+    this->fitness = 0;
+};
+
+bool KnapsackIndividual::mutate(double mutationRate)
 {
-    return problem->getFitness(*this);
+    return false;
 }
 
-void KnapsackIndividual::mutate()
-{
-
-}
-
-Individual* KnapsackIndividual::crossover(Individual& other)
+KnapsackIndividual* KnapsackIndividual::crossover(KnapsackIndividual& other)
 {
     return nullptr;
 }

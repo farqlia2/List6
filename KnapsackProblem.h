@@ -1,19 +1,19 @@
-#pragma once
+#ifndef LIST6_KNAPSACKPROBLEM_H
+#define LIST6_KNAPSACKPROBLEM_H
 
-#include "Problem.h"
-#include "vector"
+#include <vector>
 #include "Constants.h"
-#include "Individual.h"
+#include "KnapsackIndividual.h"
 
 using namespace std;
 
-class KnapsackProblem : Problem
+class KnapsackProblem
 {
 public:
 	static KnapsackProblem* create(vector<double>&& weights,
 		vector<double>&& values, double capacity);
-	double getFitness(Individual* ind) override;
-	int getSize() override;
+	void computeFitness(KnapsackIndividual& ind);
+	int getSize();
 
 private:
 	KnapsackProblem(vector<double>&& weights,
@@ -26,3 +26,5 @@ private:
 	double capacity;
 };
 
+
+#endif

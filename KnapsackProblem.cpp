@@ -7,6 +7,7 @@ KnapsackProblem::KnapsackProblem(vector<double>&& weights,
 	this->capacity = capacity;
 }
 
+// use move semantics here
 KnapsackProblem* KnapsackProblem::create(vector<double>&& weights,
 	vector<double>&& values, double capacity)
 {
@@ -20,9 +21,9 @@ bool KnapsackProblem::validate(vector<double>& weights,
 	return true;
 }
 
-double KnapsackProblem::getFitness(Individual* ind)
+void KnapsackProblem::computeFitness(KnapsackIndividual& ind)
 {
-	vector<int> genome = *ind->getGenome();
+	vector<int> genome = *ind.getGenome();
 	double fitness = 0;
 	double weight = 0;
 	for (int gene = 0; gene < getSize(); gene++) {
@@ -31,7 +32,7 @@ double KnapsackProblem::getFitness(Individual* ind)
 			weight += weights[gene];
 		}
 	}
-	return weight <= capacity ? fitness : 0; 
+	ind.setFitness(weight <= capacity ? fitness : 0.0);
 }
 
 int KnapsackProblem::getSize()
