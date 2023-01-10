@@ -1,38 +1,40 @@
 #include "KnapsackProblem.h"
 
-KnapsackProblem::KnapsackProblem(vector<double> weights,
-	vector<double> values, double capacity) {
+KnapsackProblem::KnapsackProblem(vector<double>&& weights,
+	vector<double>&& values, double capacity) {
 	this->weights = weights;
 	this->values = values;
 	this->capacity = capacity;
 }
 
-KnapsackProblem* KnapsackProblem::create(vector<double> weights,
-	vector<double> values, double capacity)
+// Or maybe have these arguments copied into this method
+KnapsackProblem* KnapsackProblem::create(vector<double>&& weights,
+	vector<double>&& values, double capacity)
 {
-	if (validate) return new KnapsackProblem(weights, values, capacity);
+	if (validate(weights, values, capacity))
+        return new KnapsackProblem(std::move(weights), std::move(values), capacity);
+    else return nullptr;
 }
 
-bool KnapsackProblem::validate(vector<double> weights,
-	vector<double> values, double capacity) {
+bool KnapsackProblem::validate(vector<double>& weights,
+	vector<double>& values, double capacity) {
 	return true;
 }
 
-double KnapsackProblem::getFitness(Individual& ind) 
+double KnapsackProblem::getFitness(vector<int>& genotype)
 {
-	vector<int> genome = *ind.getGenome();
 	double fitness = 0;
 	double weight = 0;
-	for (int gene = 0; gene < getSize(); gene++) {
-		if (genome[gene] == ONE) {
-			fitness += values[gene];
-			weight += weights[gene];
+	for (int g = 0; g < genotype.size(); g++) {
+		if (genotype.at(g) == ONE) {
+			fitness += values[g];
+			weight += weights[g];
 		}
 	}
 	return weight <= capacity ? fitness : 0; 
 }
 
-int KnapsackProblem::getSize()
+int KnapsackProblem::getLength()
 {
 	return values.size();
 }

@@ -1,13 +1,14 @@
 #pragma once
-#include "Problem.h"
 #include "vector"
+
+using namespace std;
 
 class Individual
 {
 public:
-	virtual double getFitness();
-	virtual void mutate();
+	virtual double getFitness() = 0;
+	virtual void mutate() = 0;
 	virtual vector<int>* getGenome() = 0;
-	virtual Individual* crossover(Individual& other);
+	virtual pair<Individual*, Individual*> crossover(Individual& other) = 0;
 };
 
