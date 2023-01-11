@@ -14,7 +14,7 @@
 template <typename T> class SmartPointer
 {
 public:
-    SmartPointer(T pointer[]);
+    SmartPointer(T* pointer);
 
     ~SmartPointer();
 
@@ -30,7 +30,7 @@ private:
 
 
 template <typename T>
-SmartPointer<T>::SmartPointer(T pointer[]) {
+SmartPointer<T>::SmartPointer(T* pointer) {
     this->pointer = pointer;
     this->counter = new Counter();
     counter->incr();

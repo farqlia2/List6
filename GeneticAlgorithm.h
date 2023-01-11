@@ -8,6 +8,8 @@
 #include "KnapsackProblem.h"
 #include <random>
 
+using namespace std;
+
 class GeneticAlgorithm {
 public:
     GeneticAlgorithm(KnapsackProblem* problem,
@@ -23,6 +25,9 @@ public:
 
     bool isFinished();
 private:
+
+    void createGenome(vector<int>& genome);
+
     KnapsackProblem* problem;
     KnapsackIndividual* bestSolution;
     int iterations;

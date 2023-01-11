@@ -10,7 +10,8 @@ using namespace std;
 class KnapsackIndividual
 {
 public:
-    KnapsackIndividual(){};
+    KnapsackIndividual() = default;
+
 	KnapsackIndividual(KnapsackProblem* problem, 
 		vector<int>&& genome) {
 		this->genome = new vector<int>(std::move(genome));
@@ -24,9 +25,11 @@ public:
 	double getFitness();
 	void mutate(double mutationRate);
 	vector<int>* getGenome() { return genome; };
-	pair<KnapsackIndividual*, KnapsackIndividual*>* crossover(KnapsackIndividual& other);
+    // We'll use move semantics while copying from the pair
+	pair<KnapsackIndividual, KnapsackIndividual>* crossover(KnapsackIndividual& other);
 
 private:
+
 	vector<int>* genome;
 	KnapsackProblem* problem;
 

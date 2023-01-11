@@ -13,13 +13,18 @@ KnapsackProblem* KnapsackProblem::create(vector<double>&& weights,
 {
 	if (validate(weights, values, capacity))
         return new KnapsackProblem(std::move(weights), std::move(values), capacity);
-    else return nullptr;
+    else
+        return nullptr;
 }
 
 bool KnapsackProblem::validate(vector<double>& weights,
 	vector<double>& values, double capacity) {
-	return true;
+
+    return (std::all_of(values.cbegin(), values.cend(), [](int i){ return i > 0; })
+    && std::all_of(weights.cbegin(), weights.cend(), [](int i){ return i > 0; }) && capacity > 0);
+
 }
+
 
 double KnapsackProblem::getFitness(vector<int>& genotype)
 {

@@ -3,6 +3,7 @@
 #include "Problem.h"
 #include "vector"
 #include "Constants.h"
+#include "algorithm"
 
 using namespace std;
 
@@ -15,6 +16,7 @@ public:
 	int getLength();
 
 private:
+
 	KnapsackProblem(vector<double>&& weights,
 		vector<double>&& values, double capacity);
 	static bool validate(vector<double>& weights,
@@ -24,4 +26,3 @@ private:
 	vector<double> values;
 	double capacity;
 };
-

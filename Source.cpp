@@ -19,9 +19,9 @@ int main(){
                                                        std::move(values), capacity);
 
     std::vector<int> genome {ZERO, ONE, ZERO, ONE};
-    KnapsackIndividual ind(std::move(genome));
+    KnapsackIndividual ind;
 
-    std::cout << problem->getFitness(ind);
+    std::cout << problem->getFitness(*ind.getGenome());
 
     GeneticAlgorithm gA(problem, 10, 0.1, 0.6, 100);
 

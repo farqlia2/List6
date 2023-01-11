@@ -17,16 +17,25 @@ double crossoverRate, int populationSize){
     this->distrib = std::uniform_real_distribution<double>(0, 1);
 }
 
+void GeneticAlgorithm::createGenome(vector<int>& genome){
+    for (int j = 0; j < problem->getLength(); j++) {
+        int gene = (int) std::round(distrib(gen));
+        genome.push_back(gene);
+    }
+}
+
+KnapsackIndividual GeneticAlgorithm::initializeIndividual(){
+    std::vector<int> genome;
+    createGenome(genome);
+    KnapsackIndividual ind(problem, std::move(genome));
+}
+
 void GeneticAlgorithm::initialize(){
 
     for (int i = 0; i < populationSize; i++){
         std::vector<int> genome;
-        for (int j = 0; j < problem->getSize(); j++) {
-            int gene = (int) std::round(distrib(gen));
-            genome.push_back(gene);
-        }
-        KnapsackIndividual ind(std::move(genome));
-        problem->computeFitness(ind);
+        createGenome(genome);
+        KnapsackIndividual ind(problem, std::move(genome));
         population.push_back(ind);
     }
 
@@ -48,4 +57,4 @@ void GeneticAlgorithm::runIteration(){
 
 }
 
-bool GeneticAlgorithm::isFinished(){return currentIteration < iterations;}
+bool GeneticAlgorithm::isFinished(){return currentIteration >= iterations;}
