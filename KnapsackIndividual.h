@@ -25,8 +25,8 @@ public:
 	double getFitness();
 	void mutate(double mutationRate);
 	vector<int>* getGenome() { return genome; };
-    // We'll use move semantics while copying from the pair
-	pair<KnapsackIndividual, KnapsackIndividual>* crossover(KnapsackIndividual& other);
+    //
+	KnapsackIndividual* crossover(KnapsackIndividual& other);
 
 private:
 

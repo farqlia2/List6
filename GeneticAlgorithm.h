@@ -27,17 +27,20 @@ public:
 private:
 
     void createGenome(vector<int>& genome);
+    KnapsackIndividual* initializeIndividual();
+
+    bool performCrossover();
 
     KnapsackProblem* problem;
     KnapsackIndividual* bestSolution;
+
     int iterations;
     int currentIteration;
     double mutationRate;
     double crossoverRate;
     int populationSize;
 
-    // Here should be used smart pointer
-    vector<KnapsackIndividual> population;
+    vector<KnapsackIndividual*> population;
 
     std::random_device rd;
     std::mt19937 gen;

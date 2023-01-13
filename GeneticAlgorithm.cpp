@@ -6,6 +6,7 @@
 GeneticAlgorithm::GeneticAlgorithm(KnapsackProblem* problem,
 int iterations, double mutationRate,
 double crossoverRate, int populationSize){
+
     this->problem = problem;
     this->iterations = iterations;
     this->mutationRate = mutationRate;
@@ -13,6 +14,7 @@ double crossoverRate, int populationSize){
     this->currentIteration = 0;
     this->populationSize = populationSize;
 
+    // Generator liczb pseudolosowych powinien być ustawiony randomowo
     this->gen = std::mt19937(this->rd());
     this->distrib = std::uniform_real_distribution<double>(0, 1);
 }
@@ -24,30 +26,33 @@ void GeneticAlgorithm::createGenome(vector<int>& genome){
     }
 }
 
-KnapsackIndividual GeneticAlgorithm::initializeIndividual(){
+bool GeneticAlgorithm::performCrossover(){
+    return distrib(gen) < crossoverRate;
+}
+
+KnapsackIndividual* GeneticAlgorithm::initializeIndividual(){
     std::vector<int> genome;
     createGenome(genome);
-    KnapsackIndividual ind(problem, std::move(genome));
+    return new KnapsackIndividual(problem, std::move(genome));
 }
 
 void GeneticAlgorithm::initialize(){
 
     for (int i = 0; i < populationSize; i++){
-        std::vector<int> genome;
-        createGenome(genome);
-        KnapsackIndividual ind(problem, std::move(genome));
-        population.push_back(ind);
+        population.push_back(initializeIndividual());
     }
 
 }
 
+
+
 void GeneticAlgorithm::runIteration(){
 
-    vector<KnapsackIndividual> newPopulation;
+    vector<KnapsackIndividual*> newPopulation;
 
     for (int i = 0; i < populationSize; i+=2){
 
-        if (distrib(gen) < crossoverRate){
+        if (performCrossover()){
 
             // generate new children
             // use maybe tournament selection or other
@@ -57,4 +62,6 @@ void GeneticAlgorithm::runIteration(){
 
 }
 
-bool GeneticAlgorithm::isFinished(){return currentIteration >= iterations;}
+bool GeneticAlgorithm::isFinished(){
+    return currentIteration >= iterations;
+}
