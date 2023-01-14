@@ -7,12 +7,10 @@ double KnapsackIndividual::getFitness()
 
 void KnapsackIndividual::mutate(double mutationRate)
 {
-
     for (int g = 0; g < genome->size(); g++){
         if (mutationRate < (*mutationDistrib)(*generator))
             (*genome)[g] = 1 - (*genome)[g];
     }
-
 }
 
 KnapsackIndividual::~KnapsackIndividual(){
@@ -26,31 +24,36 @@ KnapsackIndividual::~KnapsackIndividual(){
 
 }
 
-vector<int> generateGenome(KnapsackIndividual& p1, KnapsackIndividual& p2, int* mask){
+vector<int> exchangeGenes(Individual& p1,
+                          Individual& p2,
+                          int cutPoint, int genomeLength){
 
     vector<int> genome;
-    int genomeLength = p1.getGenome()->size();
 
-    for (int g = 0; g < genomeLength; g++){
-        genome.push_back(mask[g] * p1.getGenome()->at(g) + (1 - mask[g]) * p2.getGenome()->at(g));
-    }
+    int g = 0;
+    for (; g < cutPoint; g++) genome.push_back(p1.getGenome()->at(g));
+    for (; g < genomeLength; g++) genome.push_back(p1.getGenome()->at(g));
 
     return std::move(genome);
 
 }
 
-pair<KnapsackIndividual, KnapsackIndividual>* KnapsackIndividual::crossover(KnapsackIndividual& other){
+vector<Individual*> KnapsackIndividual::crossover(Individual& other){
 
     int genomeLength = problem->getLength();
-    int *mask = new int[genomeLength];
-    for (int g = 0; g < genomeLength; g++) {
-        mask[g] = ((int) std::round((*crossoverDistrib)(*generator)));
-    }
+    int cutPoint = (*crossoverDistrib)(*generator);
 
-    KnapsackIndividual child1 (problem, generateGenome(*this, other, mask));
-    KnapsackIndividual child2 (problem, generateGenome(other, *this, mask));
+    vector<Individual*> children;
 
-    return new pair<KnapsackIndividual, KnapsackIndividual>(std::move(child1), std::move(child2));
+    KnapsackIndividual* child1 =
+            new KnapsackIndividual(problem, exchangeGenes(*this, other, cutPoint, genomeLength));
+    KnapsackIndividual* child2 =
+            new KnapsackIndividual(problem, exchangeGenes(other, *this, cutPoint, genomeLength));
+
+    children.push_back(child1);
+    children.push_back(child2);
+
+    return children;
 }
 
 

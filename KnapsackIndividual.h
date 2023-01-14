@@ -7,26 +7,28 @@
 
 using namespace std;
 
-class KnapsackIndividual
-{
+//
+class KnapsackIndividual : public Individual {
 public:
-    KnapsackIndividual() = default;
 
 	KnapsackIndividual(KnapsackProblem* problem, 
-		vector<int>&& genome) {
-		this->genome = new vector<int>(std::move(genome));
-		this->problem = problem;
+		vector<int>&& genome, int seed = DEFAULT_SEED) : Individual(seed) {
+        this->genome = new vector<int>(std::move(genome));
+        this->problem = problem;
         this->mutationDistrib = new uniform_real_distribution<double>(0, 1);
-        this->crossoverDistrib = new uniform_real_distribution<double>(0, 1);
-        random_device rd;
-        this->generator = new mt19937(rd());
+        this->crossoverDistrib = new uniform_int_distribution<int>(1, problem->getLength() - 1);
+        this->generator = new mt19937 (seed);
 	};
+
     ~KnapsackIndividual();
-	double getFitness();
-	void mutate(double mutationRate);
-	vector<int>* getGenome() { return genome; };
-    //
-	KnapsackIndividual* crossover(KnapsackIndividual& other);
+
+    double getFitness() override;
+
+	void mutate(double mutationRate) override;
+
+	vector<int>* getGenome() override { return genome; };
+
+	vector<Individual*> crossover(Individual& other) override;
 
 private:
 
@@ -34,8 +36,9 @@ private:
 	KnapsackProblem* problem;
 
     uniform_real_distribution<double>* mutationDistrib;
-    uniform_real_distribution<double>* crossoverDistrib;
+    uniform_int_distribution<int>* crossoverDistrib;
     mt19937* generator;
+
 };
 
 
