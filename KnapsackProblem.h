@@ -1,30 +1,35 @@
 #pragma once
 
+#include <string>
 #include "Problem.h"
 #include "vector"
 #include "Constants.h"
 #include "algorithm"
+#include "SmartPointer.h"
 
 using namespace std;
 
-class KnapsackProblem
+class KnapsackProblem : public Problem
 {
 public:
-    //
-	static KnapsackProblem* create(vector<double>&& weights,
-		vector<double>&& values, double capacity);
-	double getFitness(vector<int>& genotype);
-	int getLength();
+    void read(string fileName);
+
+    void initialize(SmartPointer<vector<double>> weights,
+                    SmartPointer<vector<double>> values,
+                    int capacity);
+
+	double getFitness(vector<int>& genotype) override;
+
+	int getLength() override;
 
 private:
 
-	KnapsackProblem(vector<double>&& weights,
-		vector<double>&& values, double capacity);
+    bool validateWeights(vector<double>& weights);
+    bool validateValues(vector<double>& values);
+    bool validateCapacity(double capacity);
 
-	static bool validate(vector<double>& weights,
-		vector<double>& values, double capacity);
-	
 	vector<double> weights;
-	vector<double> values;
+    vector<double> values;
 	double capacity;
+
 };

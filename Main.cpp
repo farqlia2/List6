@@ -2,9 +2,8 @@
 // Created by julia on 1/10/2023.
 //
 
-#include "KnapsackIndividual.h"
+#include "Individual.h"
 int main(){
 
-    pair<KnapsackIndividual, KnapsackIndividual> p;
 
 }

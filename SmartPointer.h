@@ -40,7 +40,7 @@ template <typename T>
 void SmartPointer<T>::clear() {
     if (counter->decr() == 0) {
         if (DEBUG) std::cout << "delete entries\n";
-        delete[] pointer;
+        delete pointer;
         delete counter;
     }
 }

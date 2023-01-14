@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include "KnapsackProblem.h"
-#include "KnapsackIndividual.h"
+#include "Individual.h.h"
 #include "Constants.h"
 #include "GeneticAlgorithm.h"
 int main(){

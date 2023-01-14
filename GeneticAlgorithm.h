@@ -4,7 +4,7 @@
 
 #ifndef LIST6_GENETICALGORITHM_H
 #define LIST6_GENETICALGORITHM_H
-#include "KnapsackIndividual.h"
+#include "Individual.h"
 #include "KnapsackProblem.h"
 #include <random>
 
@@ -17,13 +17,16 @@ public:
                      double crossoverRate, int populationSize);
 
     // move semantics should be implemented for this
-    KnapsackIndividual getBest() {return *bestSolution; };
+    Individual getBest() {return *bestSolution; };
 
     void runIteration();
 
     void initialize();
 
     bool isFinished();
+
+    int getCurrentIteration();
+
 private:
 
     void createGenome(vector<int>& genome);
