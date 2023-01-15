@@ -26,9 +26,10 @@ class KnapsackIndividual : public Individual {
 public:
 
     KnapsackIndividual(KnapsackProblem* problem,
-                       vector<int>&& genome, int seed = DEFAULT_SEED) : Individual(seed) {
+                       vector<int>&& genome,
+                       int seed = DEFAULT_SEED) : Individual(seed),
+                       problem(problem){
         this->genome = new vector<int>(std::move(genome));
-        this->problem = problem;
         this->mutationDistrib = new uniform_real_distribution<double>(0, 1);
         this->crossoverDistrib = new uniform_int_distribution<int>(1, problem->getLength() - 1);
         this->generator = new mt19937 (seed);

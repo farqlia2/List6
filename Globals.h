@@ -5,6 +5,6 @@
 #ifndef LIST6_GLOBALS_H
 #define LIST6_GLOBALS_H
 
-# define DEBUG true
+# define DEBUG false
 
 #endif //LIST6_GLOBALS_H

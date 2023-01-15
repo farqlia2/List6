@@ -1,12 +1,11 @@
 //
 // Created by julia on 1/10/2023.
 //
-
+#pragma once
 #ifndef LIST6_SMARTPOINTER_H
 #define LIST6_SMARTPOINTER_H
 
 
-#pragma once
 #include <iostream>
 #include "Counter.h"
 #include "Globals.h"
@@ -14,11 +13,11 @@
 template <typename T> class SmartPointer
 {
 public:
-    SmartPointer(T* pointer);
+    explicit SmartPointer(T* pointer);
 
     ~SmartPointer();
 
-    void operator=(const SmartPointer& other);
+    SmartPointer<T>& operator=(const SmartPointer<T>& other);
     T& operator*();
     T* operator&();
 private:
@@ -52,7 +51,7 @@ SmartPointer<T>::~SmartPointer() {
 }
 
 template <typename T>
-void SmartPointer<T>::operator=(const SmartPointer& other) {
+SmartPointer<T>& SmartPointer<T>::operator=(const SmartPointer<T>& other) {
 
     if (&other != this) {
         clear();
@@ -60,6 +59,7 @@ void SmartPointer<T>::operator=(const SmartPointer& other) {
         this->counter = other.counter;
         counter->incr();
     }
+    return *this;
 
 }
 

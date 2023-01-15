@@ -17,7 +17,7 @@ public:
                      double crossoverRate, int populationSize);
 
     // move semantics should be implemented for this
-    Individual getBest() {return *bestSolution; };
+    Individual* getBest() {return bestSolution; };
 
     void runIteration();
 
