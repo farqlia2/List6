@@ -32,7 +32,9 @@ public:
     /*
     bool validate(vector<double>& weights,
                   vector<double>& values,
-                  int capacity);*/
+                  int capacity);
+    */
+
     bool initialize(SmartPointer<vector<double>>& weights,
                     SmartPointer<vector<double>>& values,
                     double capacity);

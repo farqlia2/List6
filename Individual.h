@@ -12,10 +12,12 @@ class Individual
 {
 public:
     Individual() : seed(DEFAULT_SEED) {};
+    virtual ~Individual() = default;
     explicit Individual(int seed) : seed(seed) {};
 	virtual double getFitness() = 0;
 	virtual void mutate(double mutationRate) = 0;
 	virtual vector<int>* getGenome() = 0;
+    // make arguments vectors?
 	virtual vector<Individual*> crossover(Individual& other) = 0;
     virtual int getSeed() {return seed;}
 private:
@@ -25,17 +27,17 @@ private:
 class KnapsackIndividual : public Individual {
 public:
 
-    KnapsackIndividual(KnapsackProblem* problem,
+    KnapsackIndividual(SmartPointer<Problem>& problem,
                        vector<int>&& genome,
                        int seed = DEFAULT_SEED) : Individual(seed),
                        problem(problem){
         this->genome = new vector<int>(std::move(genome));
         this->mutationDistrib = new uniform_real_distribution<double>(0, 1);
-        this->crossoverDistrib = new uniform_int_distribution<int>(1, problem->getLength() - 1);
+        this->crossoverDistrib = new uniform_int_distribution<int>(1, (*problem).getLength() - 1);
         this->generator = new mt19937 (seed);
     };
 
-    ~KnapsackIndividual();
+    ~KnapsackIndividual() override;
 
     double getFitness() override;
 
@@ -55,7 +57,7 @@ private:
     int* generateMask();
 
     vector<int>* genome;
-    KnapsackProblem* problem;
+    SmartPointer<Problem> problem;
 
     uniform_real_distribution<double>* mutationDistrib;
     uniform_int_distribution<int>* crossoverDistrib;

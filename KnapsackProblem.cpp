@@ -12,25 +12,24 @@ ReturnCodes KnapsackProblem::read(string fileName){
         // tries to read in number of elements and capacity
         file >> nOfElements >> capacity;
 
-        if (file.fail()) return ReturnCodes::INCORRECT_FORMAT;
+        if (!file) return ReturnCodes::INCORRECT_FORMAT;
 
         double val, weight;
 
         while (nOfElements-- > 0 && file){
 
             file >> val >> weight;
-
-            if (file){
-                (*values).push_back(val);
-                (*weights).push_back(weight);
-            }
+            (*values).push_back(val);
+            (*weights).push_back(weight);
 
         }
+
         if (!file) return ReturnCodes::INCORRECT_FORMAT;
 
         file.close();
 
         if (validate()) return ReturnCodes::SUCCESS;
+
         else return ReturnCodes::ILLEGAL_VALUE;
 
     } else return ReturnCodes::FILE_NOT_FOUND;
@@ -50,8 +49,6 @@ bool KnapsackProblem::initialize(SmartPointer<vector<double>>& weights,
 
     return areArgumentsValid;
 }
-
-
 
 void KnapsackProblem::clear(){
     this->capacity = 0;

@@ -1,23 +1,25 @@
 //
 // Created by julia on 12/28/2022.
 //
-
+# pragma once
 #ifndef LIST6_GENETICALGORITHM_H
 #define LIST6_GENETICALGORITHM_H
 #include "Individual.h"
 #include "KnapsackProblem.h"
+#include "StopCondition.h"
 #include <random>
 
 using namespace std;
 
 class GeneticAlgorithm {
 public:
-    GeneticAlgorithm(KnapsackProblem* problem,
+    GeneticAlgorithm(SmartPointer<Problem>& problem,
                      int iterations, double mutationRate,
-                     double crossoverRate, int populationSize);
+                     double crossoverRate, int populationSize,
+                     int seed = DEFAULT_SEED);
 
-    // move semantics should be implemented for this
-    Individual* getBest() {return bestSolution; };
+    // What type should go there
+    SmartPointer<Individual> getBest() {return bestSolution; };
 
     void runIteration();
 
@@ -30,12 +32,19 @@ public:
 private:
 
     void createGenome(vector<int>& genome);
-    KnapsackIndividual* initializeIndividual();
+    Individual* initializeIndividual();
 
-    bool performCrossover();
+    bool shouldPerformCrossover();
 
-    KnapsackProblem* problem;
-    KnapsackIndividual* bestSolution;
+    void replicate();
+    void mutate();
+
+    void destroy(vector<Individual*>& pop);
+
+    vector<Individual*> selectParents();
+
+    SmartPointer<Problem> problem;
+    SmartPointer<Individual> bestSolution;
 
     int iterations;
     int currentIteration;
@@ -43,11 +52,13 @@ private:
     double crossoverRate;
     int populationSize;
 
-    vector<KnapsackIndividual*> population;
+    int seed;
 
-    std::random_device rd;
+    vector<Individual*> population;
+
     std::mt19937 gen;
-    std::uniform_real_distribution<double> distrib;
+    std::uniform_real_distribution<double> realDistrib;
+    std::uniform_int_distribution<int> intDistrib;
 };
 
 

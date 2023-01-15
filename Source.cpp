@@ -14,6 +14,10 @@ constexpr void assert_that(bool statement, const char* message){
     if (!statement) throw std::runtime_error{message};
 }
 
+template<typename T> constexpr void assert_equals(T actual, T expected, const char* message){
+    if (actual != expected) throw std::runtime_error{message};
+}
+
 void testReadingInstanceFromFile();
 
 void testReadingFromFile();
@@ -40,7 +44,9 @@ int main(){
     GeneticAlgorithm gA(problem, 10, 0.1, 0.6, 100);
      */
 
-    testReadingInstanceFromFile();
+    //testReadingInstanceFromFile();
+
+    SmartPointer<string> smPointer(nullptr);
 
 }
 
@@ -111,21 +117,46 @@ void testReadingInstanceFromFile(){
 
     std::vector<int> genome {ZERO, ONE, ZERO, ONE};
     KnapsackProblem problem;
-    string fileName("C:\\Users\\julia\\source\\repos\\List6\\non_existing.txt");
+    string fileName("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\non_existing.txt");
 
     ReturnCodes code = problem.read(fileName);
     assert_that(code == ReturnCodes::FILE_NOT_FOUND,
                 "Shouldn't read from non-existing file");
 
-    fileName = ("C:\\Users\\julia\\source\\repos\\List6\\incorrect_header.txt");
+    assert_equals(problem.getLength(), 0, "Shouldn't throw if the reading operation is not success");
+    assert_equals(problem.getFitness(genome), 0.0, "Shouldn't throw if the reading operation is not success");
+
+    fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\incorrect_header.txt");
 
     code = problem.read(fileName);
     assert_that(code == ReturnCodes::INCORRECT_FORMAT,
                 "Shouldn't accept file with incorrect header");
 
+    fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\incorrect_format.txt");
 
+    code = problem.read(fileName);
+    assert_that(code == ReturnCodes::INCORRECT_FORMAT,
+                "Shouldn't accept file with missing values");
 
-    //cout << problem.getLength() << "\n";
-    //cout << problem.getFitness(genome) << "\n";
+    fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\text_occurence.txt");
+
+    code = problem.read(fileName);
+    assert_that(code == ReturnCodes::INCORRECT_FORMAT,
+                "Shouldn't accept file with non-numeric occurence");
+
+    fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\negative_value.txt");
+
+    code = problem.read(fileName);
+    assert_that(code == ReturnCodes::ILLEGAL_VALUE,
+                "Shouldn't accept file with negative value");
+
+    fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\correct_mock_file.txt");
+
+    code = problem.read(fileName);
+    assert_that(code == ReturnCodes::SUCCESS,
+                "Should accept correctly formatted instance");
+
+    assert_equals(problem.getLength(), 4, "Length should agree");
+    assert_equals(problem.getFitness(genome), 4.0, "Should correctly compute fitness");
 
 }

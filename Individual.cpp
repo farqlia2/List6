@@ -2,7 +2,7 @@
 
 double KnapsackIndividual::getFitness()
 {
-    return problem->getFitness(*genome);
+    return (*problem).getFitness(*genome);
 }
 
 void KnapsackIndividual::mutate(double mutationRate)
@@ -41,18 +41,18 @@ vector<int> KnapsackIndividual::exchangeGenes(Individual& p1,
 
 int* KnapsackIndividual::generateMask(){
 
-    int* mask = new int[problem->getLength()];
+    int* mask = new int[(*problem).getLength()];
     int cutPoint = (*crossoverDistrib)(*generator);
     int g = 0;
     for (; g < cutPoint; g++) mask[g] = 0;
-    for (; g < problem->getLength(); g++) mask[g] = 1;
+    for (; g < (*problem).getLength(); g++) mask[g] = 1;
     return mask;
 
 }
 
 vector<Individual*> KnapsackIndividual::crossover(Individual& other){
 
-    int genomeLength = problem->getLength();
+    int genomeLength = (*problem).getLength();
     int* mask = generateMask();
 
     vector<Individual*> children;
@@ -65,7 +65,7 @@ vector<Individual*> KnapsackIndividual::crossover(Individual& other){
     children.push_back(child1);
     children.push_back(child2);
 
-    return children;
+    return std::move(children);
 }
 
 
