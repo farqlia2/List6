@@ -17,6 +17,8 @@ bool KnapsackProblemRunner::runAlgorithm(string& fileName) {
     //if (!solution.read(concat(SOLUTIONS_DIR, fileName)))
       //  std::cout << "Couldn't read in optimal solution\n";
 
+    ofstream resultsFile {concat(RESULTS_DIR, fileName)};
+
     try {
 
         (*problemPointer).read(concat(INSTANCES_DIR, fileName));
@@ -29,8 +31,10 @@ bool KnapsackProblemRunner::runAlgorithm(string& fileName) {
             gA.runIteration();
             std::cout << "[" << gA.getCurrentIteration() << "] = " <<
             solution.relativeToOptimal((*gA.getBest()).getFitness()) << "\n";
+            resultsFile << solution.relativeToOptimal((*gA.getBest()).getFitness()) << "\n";
         }
 
+        resultsFile.close();
 
     } catch (exception& exc){
         std::cout << exc.what();
