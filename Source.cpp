@@ -8,6 +8,8 @@
 #include "Constants.h"
 #include "GeneticAlgorithm.h"
 #include <functional>
+#include "Runner.h"
+#include "Globals.h"
 
 #include <stdexcept>
 
@@ -39,34 +41,47 @@ void assert_does_not_throw(std::function<void(void)>& f, const char* message){
 
 void testReadingInstanceFromFile();
 
-void mockf();
-
 void testInitializingProblem();
+
+void runProblems(Runner& runner,
+                 vector<string>& problemNames);
 
 int main(){
 
-    testReadingInstanceFromFile();
-    testInitializingProblem();
+    random_device rd;
+
+    unsigned int seed = rd();
+
+    int iterations = 100;
+    double mutationRate = 0.1;
+    double crossoverRate = 0.65;
+    int populationSize = 100;
+
+    KnapsackProblemRunner runner (populationSize, crossoverRate,
+                          mutationRate, iterations, seed);
+
+    vector<string> problemNames {"f2_l-d_kp_20_878"};
+
+    runProblems(runner, problemNames);
+
+    std::cout << "Used seed = " << seed << "\n";
+
+    //testReadingInstanceFromFile();
+    //testInitializingProblem();
 
 }
 
-void mockf(){
+void runProblems(Runner& runner,
+                 vector<string>& problemNames){
 
-    string fileName("C:\\Users\\julia\\source\\repos\\List6\\mock_file.txt");
+    for (string& problemName : problemNames){
 
-    fstream file(fileName, ios::in);
+        std::cout << "Running Problem = " << problemName << "\n";
 
-    if (file.is_open()){
-
-        int i1 = 0;
-        file >> i1;
-        cout << i1 << "\n";
-
-        int i2, i3;
-        file >> i2 >> i3;
-        cout << i2 << ", " << i3 <<"\n";
+        runner.runAlgorithm(problemName);
 
     }
+
 }
 
 void testInitializingProblem(){
@@ -100,7 +115,7 @@ void testInitializingProblem(){
 
     f = [&pointerWeights, &pointerValues, &capacity](){ KnapsackProblem(pointerWeights, pointerValues, capacity); };
 
-    assert_throws(f, "Weights, values and capacity should be positive",
+    assert_throws(f, "Weights should be positive",
                   "Shouldn't initialize object with negative value");
 
     *weights = vector<double>{ 4, 2, 3 };
@@ -108,8 +123,8 @@ void testInitializingProblem(){
 
     f = [&pointerWeights, &pointerValues, &capacity](){ KnapsackProblem(pointerWeights, pointerValues, capacity); };
 
-    assert_throws(f, "Weights, values and capacity should be positive",
-                  "Weights length and values length should be the same");
+    assert_throws(f, "Weights length and values length should be the same",
+                  "Shouldn't initialize object with unequal weights and values lengths");
 
 }
 
@@ -119,37 +134,37 @@ void testReadingInstanceFromFile(){
     KnapsackProblem problem;
     string fileName("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\non_existing.txt");
 
-    function<void(void)> f = [&problem, &fileName](){ problem.read(fileName); };
+    function<void(void)> f = [&problem, &fileName](){ problem.read(std::move(fileName)); };
 
     assert_throws(f, "Couldn't open the file", "Should throw for non existing file");
 
 
     fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\incorrect_header.txt");
 
-    f = [&problem, &fileName](){ problem.read(fileName); };
+    f = [&problem, &fileName](){ problem.read(std::move(fileName)); };
     assert_throws(f, "File is badly formatted", "Shouldn't accept file with incorrect header");
 
     fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\incorrect_format.txt");
 
-    f = [&problem, &fileName](){ problem.read(fileName); };
+    f = [&problem, &fileName](){ problem.read(std::move(fileName)); };
     assert_throws(f, "File is badly formatted", "Shouldn't accept file with missing values");
 
 
     fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\text_occurence.txt");
 
-    f = [&problem, &fileName](){ problem.read(fileName); };
+    f = [&problem, &fileName](){ problem.read(std::move(fileName)); };
     assert_throws(f, "File is badly formatted", "Shouldn't accept file with non-numeric occurence");
 
 
     fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\negative_value.txt");
 
-    f = [&problem, &fileName](){ problem.read(fileName); };
-    assert_throws(f, "Weights, values and capacity should be positive", "Shouldn't accept file with negative value");
+    f = [&problem, &fileName](){ problem.read(std::move(fileName)); };
+    assert_throws(f, "Values should be positive", "Shouldn't accept file with negative value");
 
 
     fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\correct_mock_file.txt");
 
-    problem.read(fileName);
+    problem.read(std::move(fileName));
 
     assert_equals(problem.getLength(), 4, "Length should agree");
     assert_equals(problem.getFitness(genome), 4.0, "Should correctly compute fitness");

@@ -7,4 +7,9 @@
 
 # define DEBUG false
 
+#include "string"
+
+const std::string INSTANCES_DIR = R"(C:\Users\julia\source\repos\List6\data)";
+const std::string SOLUTIONS_DIR = R"(C:\Users\julia\source\repos\List6\optimum)";
+
 #endif //LIST6_GLOBALS_H

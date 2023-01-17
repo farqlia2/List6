@@ -11,6 +11,7 @@ public:
     virtual ~Problem() = default;
 	virtual double getFitness(vector<int>& genome) = 0;
 	virtual int getLength() = 0;
+    virtual void read(string&& fileName) {};
 };
 #endif
 

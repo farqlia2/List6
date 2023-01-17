@@ -11,14 +11,17 @@ using namespace std;
 class Individual
 {
 public:
+
     Individual(SharedPointer<Problem>& problem,
                vector<int>&& genome,
-               int seed = DEFAULT_SEED) : seed(seed), problem(problem), genome(std::move(genome)) {};
+               int seed = DEFAULT_SEED) : seed(seed),
+               problem(problem), genome(std::move(genome)) {};
+
     Individual(const Individual& other) = default;
     virtual ~Individual() = default;
-	virtual double getFitness() = 0;
+	double getFitness() { return (*problem).getFitness(genome);};
 	virtual void mutate(double mutationRate) = 0;
-	virtual vector<int>* getGenome() = 0;
+    vector<int>* getGenome() { return &genome; };
 	virtual vector<UniquePointer<Individual>> crossover(Individual& other) = 0;
     int getSeed() const {return seed;}
 private:
@@ -33,7 +36,8 @@ public:
 
     KnapsackIndividual(SharedPointer<Problem>& problem,
                        vector<int>&& genome,
-                       int seed = DEFAULT_SEED) : Individual(problem, std::move(genome), seed), mutationDistrib(0, 1),
+                       int seed = DEFAULT_SEED) : Individual(problem, std::move(genome), seed),
+                       mutationDistrib(0, 1),
                        crossoverDistrib(1, (*problem).getLength() - 1),
                        generator(seed){
     };
@@ -42,11 +46,7 @@ public:
         mutationDistrib(0, 1), crossoverDistrib(1, (*problem).getLength() - 1),
         generator(other.getSeed()) {};
 
-    double getFitness() override;
-
     void mutate(double mutationRate) override;
-
-    vector<int>* getGenome() override { return &genome; };
 
     vector<UniquePointer<Individual>> crossover(Individual& other) override;
 

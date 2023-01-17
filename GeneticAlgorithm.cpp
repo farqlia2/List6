@@ -5,19 +5,14 @@
 #include "GeneticAlgorithm.h"
 GeneticAlgorithm::GeneticAlgorithm(SharedPointer<Problem>& problem,
                                    int iterations, double mutationRate,
-                                   double crossoverRate, int populationSize, int seed) : problem(problem),
-                                            bestSolution(nullptr), seed(seed){
+                                   double crossoverRate, int populationSize, int seed) :
+                                   problem(problem),
+                                   bestSolution(nullptr), seed(seed), iterations(iterations),
+                                   mutationRate(mutationRate), crossoverRate(crossoverRate),
+                                   currentIteration(0), populationSize(populationSize),
+                                   gen(seed), realDistrib(0, 1), intDistrib(0, populationSize - 1){
 
-    this->iterations = iterations;
-    this->mutationRate = mutationRate;
-    this->crossoverRate = crossoverRate;
-    this->currentIteration = 0;
-    this->populationSize = populationSize;
-
-    // Generator liczb pseudolosowych powinien być ustawiony randomowo
-    this->gen = std::mt19937(seed);
-    this->realDistrib = std::uniform_real_distribution<double>(0, 1);
-    this->intDistrib = std::uniform_int_distribution<int>(0, populationSize - 1);
+    initializePopulation();
 }
 
 void GeneticAlgorithm::createGenome(vector<int>& genome){
@@ -51,10 +46,12 @@ UniquePointer<Individual> GeneticAlgorithm::initializeIndividual(){
 }
 
 
-void GeneticAlgorithm::initialize(){
+void GeneticAlgorithm::initializePopulation(){
+    populationSize = (populationSize / 2) * 2;
     for (int i = 0; i < populationSize; i++){
         population.push_back(initializeIndividual());
     }
+    bestSolution = SharedPointer<Individual>(new KnapsackIndividual(*(initializeIndividual())));
 }
 
 void GeneticAlgorithm::replicate(){
@@ -79,7 +76,6 @@ void GeneticAlgorithm::replicate(){
                 newPopulation.push_back(UniquePointer<Individual>(new KnapsackIndividual(*parent)));
 
         }
-
     }
 
     population = std::move(newPopulation);

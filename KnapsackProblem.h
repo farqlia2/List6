@@ -12,10 +12,11 @@
 #include <stdexcept>
 
 using namespace std;
-
+/*
 enum class ReturnCodes: int {
     SUCCESS, INCORRECT_FORMAT, FILE_NOT_FOUND, ILLEGAL_VALUE
 };
+ */
 
 class KnapsackProblem : public Problem
 {
@@ -35,15 +36,7 @@ public:
     // v1 w1
     // ...
     // vn wn
-    void read(string fileName);
-
-    /*
-    bool validate(vector<double>& weights,
-                  vector<double>& values,
-                  int capacity);
-    */
-
-
+    void read(string&& fileName) noexcept(false) override;
 
 	double getFitness(vector<int>& genotype) override;
 

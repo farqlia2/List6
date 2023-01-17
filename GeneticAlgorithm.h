@@ -23,8 +23,6 @@ public:
 
     void runIteration();
 
-    void initialize();
-
     bool isFinished();
 
     int getCurrentIteration() const {return currentIteration;};
@@ -38,6 +36,7 @@ private:
 
     bool shouldPerformCrossover();
 
+    void initializePopulation();
     void replicate();
     void mutate();
     void findBestSolution();

@@ -1,6 +1,6 @@
 #include "KnapsackProblem.h"
 
-void KnapsackProblem::read(string fileName){
+void KnapsackProblem::read(string&& fileName){
 
     ifstream file(fileName);
     clear();
@@ -53,10 +53,14 @@ void KnapsackProblem::clear(){
 }
 
 void KnapsackProblem::validate(){
-    if (!validateCapacity())
+    if (!validateLengths())
         throw IllegalArgumentException("Weights length and values length should be the same");
-    if (!validateLengths() || !validateValues() || !validateWeights())
-        throw IllegalArgumentException("Weights, values and capacity should be positive");
+    if (!validateCapacity())
+        throw IllegalArgumentException("Capacity should be positive");
+    if (!validateWeights())
+        throw IllegalArgumentException("Weights should be positive");
+    if (!validateValues())
+        throw IllegalArgumentException("Values should be positive");
 }
 
 bool KnapsackProblem::validateWeights() {

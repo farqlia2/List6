@@ -1,10 +1,5 @@
 #include "Individual.h"
 
-double KnapsackIndividual::getFitness()
-{
-    return (*problem).getFitness(genome);
-}
-
 void KnapsackIndividual::mutate(double mutationRate)
 {
     for (int g = 0; g < genome.size(); g++){
