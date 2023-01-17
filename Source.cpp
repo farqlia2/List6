@@ -7,6 +7,7 @@
 #include "Individual.h"
 #include "Constants.h"
 #include "GeneticAlgorithm.h"
+#include <functional>
 
 #include <stdexcept>
 
@@ -18,39 +19,38 @@ template<typename T> constexpr void assert_equals(T actual, T expected, const ch
     if (actual != expected) throw std::runtime_error{message};
 }
 
+void assert_throws(std::function<void(void)>& f, const char* expected_message, const char* message){
+    try {
+        f();
+    } catch (exception& exception) {
+        if (std::string (expected_message) != std::string (exception.what())) throw std::runtime_error{"Other exception has been thrown"};
+        return;
+    };
+    throw std::runtime_error{message};
+}
+
+void assert_does_not_throw(std::function<void(void)>& f, const char* message){
+    try{
+        f();
+    } catch (exception& exception){
+        throw std::runtime_error{message};
+    }
+}
+
 void testReadingInstanceFromFile();
 
-void testReadingFromFile();
+void mockf();
 
 void testInitializingProblem();
 
 int main(){
 
-    /*
-    std::cout << "Hello\n";
-
-    vector<double> weights = { 4, 2, 3, 2 };
-    vector<double> values = { 5, 1, 4, 3 };
-    double capacity = 5;
-
-    KnapsackProblem* problem = KnapsackProblem::create(std::move(weights),
-                                                       std::move(values), capacity);
-
-    std::vector<int> genome {ZERO, ONE, ZERO, ONE};
-    KnapsackIndividual ind;
-
-    std::cout << problem->getFitness(*ind.getGenome());
-
-    GeneticAlgorithm gA(problem, 10, 0.1, 0.6, 100);
-     */
-
-    //testReadingInstanceFromFile();
-
-    SmartPointer<string> smPointer(nullptr);
+    testReadingInstanceFromFile();
+    testInitializingProblem();
 
 }
 
-void testReadingFromFile(){
+void mockf(){
 
     string fileName("C:\\Users\\julia\\source\\repos\\List6\\mock_file.txt");
 
@@ -76,13 +76,15 @@ void testInitializingProblem(){
     vector<double>* values = new vector<double>{ 5, 1, 4, 3 };
     double capacity = 5;
 
-    SmartPointer<vector<double>> pointerWeights(weights);
-    SmartPointer<vector<double>> pointerValues(values);
+    SharedPointer<vector<double>> pointerWeights(weights);
+    SharedPointer<vector<double>> pointerValues(values);
 
     KnapsackProblem problem;
 
-    assert_that(problem.initialize(pointerWeights, pointerValues, capacity),
-                "Couldn't initialize object with correct arguments");
+    function<void(void)> f = [&pointerWeights, &pointerValues, &capacity](){ KnapsackProblem(pointerWeights,
+                                                                             pointerValues, capacity); };
+
+    assert_does_not_throw(f, "Shouldn't throw for correct values");
 
     /*
     cout << weights << "\n";
@@ -91,25 +93,23 @@ void testInitializingProblem(){
      // we could actually get a memory leak here
     weights = new vector<double>{ 4, 2, 3, 2 };
     cout << weights << "\n";
-    cout << (&pointerWeights) << "\n";
-     */
+    cout << (&pointerWeights) << "\n";*/
 
     *weights = vector<double>{ 4, 2, 3, -2 };
     *values = vector<double>{ 5, 1, 4, 3 };
 
-    assert_that(!problem.initialize(pointerWeights, pointerValues, capacity),
-                "Initialized object with negative value");
+    f = [&pointerWeights, &pointerValues, &capacity](){ KnapsackProblem(pointerWeights, pointerValues, capacity); };
+
+    assert_throws(f, "Weights, values and capacity should be positive",
+                  "Shouldn't initialize object with negative value");
 
     *weights = vector<double>{ 4, 2, 3 };
     *values = vector<double>{ 5, 1, 4, 3 };
 
-    assert_that(!problem.initialize(pointerWeights, pointerValues, capacity),
-                "Initialized object with unequal argument lengths");
+    f = [&pointerWeights, &pointerValues, &capacity](){ KnapsackProblem(pointerWeights, pointerValues, capacity); };
 
-    std::vector<int> genome {ZERO, ONE, ZERO, ONE};
-
-    cout << problem.getLength() << "\n";
-    cout << problem.getFitness(genome) << "\n";
+    assert_throws(f, "Weights, values and capacity should be positive",
+                  "Weights length and values length should be the same");
 
 }
 
@@ -119,42 +119,37 @@ void testReadingInstanceFromFile(){
     KnapsackProblem problem;
     string fileName("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\non_existing.txt");
 
-    ReturnCodes code = problem.read(fileName);
-    assert_that(code == ReturnCodes::FILE_NOT_FOUND,
-                "Shouldn't read from non-existing file");
+    function<void(void)> f = [&problem, &fileName](){ problem.read(fileName); };
 
-    assert_equals(problem.getLength(), 0, "Shouldn't throw if the reading operation is not success");
-    assert_equals(problem.getFitness(genome), 0.0, "Shouldn't throw if the reading operation is not success");
+    assert_throws(f, "Couldn't open the file", "Should throw for non existing file");
+
 
     fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\incorrect_header.txt");
 
-    code = problem.read(fileName);
-    assert_that(code == ReturnCodes::INCORRECT_FORMAT,
-                "Shouldn't accept file with incorrect header");
+    f = [&problem, &fileName](){ problem.read(fileName); };
+    assert_throws(f, "File is badly formatted", "Shouldn't accept file with incorrect header");
 
     fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\incorrect_format.txt");
 
-    code = problem.read(fileName);
-    assert_that(code == ReturnCodes::INCORRECT_FORMAT,
-                "Shouldn't accept file with missing values");
+    f = [&problem, &fileName](){ problem.read(fileName); };
+    assert_throws(f, "File is badly formatted", "Shouldn't accept file with missing values");
+
 
     fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\text_occurence.txt");
 
-    code = problem.read(fileName);
-    assert_that(code == ReturnCodes::INCORRECT_FORMAT,
-                "Shouldn't accept file with non-numeric occurence");
+    f = [&problem, &fileName](){ problem.read(fileName); };
+    assert_throws(f, "File is badly formatted", "Shouldn't accept file with non-numeric occurence");
+
 
     fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\negative_value.txt");
 
-    code = problem.read(fileName);
-    assert_that(code == ReturnCodes::ILLEGAL_VALUE,
-                "Shouldn't accept file with negative value");
+    f = [&problem, &fileName](){ problem.read(fileName); };
+    assert_throws(f, "Weights, values and capacity should be positive", "Shouldn't accept file with negative value");
+
 
     fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\correct_mock_file.txt");
 
-    code = problem.read(fileName);
-    assert_that(code == ReturnCodes::SUCCESS,
-                "Should accept correctly formatted instance");
+    problem.read(fileName);
 
     assert_equals(problem.getLength(), 4, "Length should agree");
     assert_equals(problem.getFitness(genome), 4.0, "Should correctly compute fitness");

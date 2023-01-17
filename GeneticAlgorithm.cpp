@@ -3,12 +3,11 @@
 //
 
 #include "GeneticAlgorithm.h"
-GeneticAlgorithm::GeneticAlgorithm(SmartPointer<Problem>& problem,
-int iterations, double mutationRate,
-double crossoverRate, int populationSize, int seed) : problem(problem),
+GeneticAlgorithm::GeneticAlgorithm(SharedPointer<Problem>& problem,
+                                   int iterations, double mutationRate,
+                                   double crossoverRate, int populationSize, int seed) : problem(problem),
                                             bestSolution(nullptr), seed(seed){
 
-    this->problem = problem;
     this->iterations = iterations;
     this->mutationRate = mutationRate;
     this->crossoverRate = crossoverRate;
@@ -37,22 +36,20 @@ vector<Individual*> GeneticAlgorithm::selectParents(){
     int parent1 = intDistrib(gen);
     int parent2 = intDistrib(gen);
 
-    vector<Individual*> parents {population.at(parent1), population.at(parent2)};
+    vector<Individual*> parents {
+        &population.at(parent1),
+        &population.at(parent2)
+    };
 
     return std::move(parents);
 }
 
-Individual* GeneticAlgorithm::initializeIndividual(){
+UniquePointer<Individual> GeneticAlgorithm::initializeIndividual(){
     std::vector<int> genome;
     createGenome(genome);
-    return new KnapsackIndividual(problem, std::move(genome));
+    return UniquePointer<Individual>(new KnapsackIndividual(problem, std::move(genome)));
 }
 
-void GeneticAlgorithm::destroy(vector<Individual*>& pop){
-    for (int i = 0; i < populationSize; i++){
-        delete pop.at(i);
-    }
-}
 
 void GeneticAlgorithm::initialize(){
     for (int i = 0; i < populationSize; i++){
@@ -62,7 +59,7 @@ void GeneticAlgorithm::initialize(){
 
 void GeneticAlgorithm::replicate(){
 
-    vector<Individual*> newPopulation;
+    vector<UniquePointer<Individual>> newPopulation;
 
     for (int i = 0; i < populationSize; i+=2){
 
@@ -70,25 +67,28 @@ void GeneticAlgorithm::replicate(){
 
         if (shouldPerformCrossover()){
 
-            vector<Individual*> children = parents.at(0)->crossover(*parents.at(1));
+            vector<UniquePointer<Individual>> children =
+                    parents.at(0)->crossover(*parents.at(1));
 
-            for (Individual* child : children) newPopulation.push_back(child);
+            for (UniquePointer<Individual>& child : children)
+                newPopulation.push_back(std::move(child));
 
         } else {
 
-            for (Individual* parent : parents) newPopulation.push_back(parent);
+            for (Individual* parent : parents)
+                newPopulation.push_back(UniquePointer<Individual>(new KnapsackIndividual(*parent)));
 
         }
 
     }
 
     population = std::move(newPopulation);
-
 }
 
 void GeneticAlgorithm::mutate(){
 
-    for (Individual* ind : population) ind->mutate(mutationRate);
+    for (UniquePointer<Individual>& ind : population)
+        (*ind).mutate(mutationRate);
 
 }
 
@@ -100,6 +100,19 @@ void GeneticAlgorithm::runIteration(){
 
     findBestSolution();
 
+    currentIteration++;
+}
+
+void GeneticAlgorithm::findBestSolution(){
+
+    int indexOfBestSolution = -1;
+
+    for (int i = 0; i < populationSize; i++) {
+        if ((*population.at(i)).getFitness() > (*bestSolution).getFitness()) indexOfBestSolution = i;
+    }
+
+    if (indexOfBestSolution >= 0) bestSolution =
+            SharedPointer<Individual>(new KnapsackIndividual(*population.at(indexOfBestSolution)));
 }
 
 bool GeneticAlgorithm::isFinished(){

@@ -13,13 +13,13 @@ using namespace std;
 
 class GeneticAlgorithm {
 public:
-    GeneticAlgorithm(SmartPointer<Problem>& problem,
+    GeneticAlgorithm(SharedPointer<Problem>& problem,
                      int iterations, double mutationRate,
                      double crossoverRate, int populationSize,
                      int seed = DEFAULT_SEED);
 
     // What type should go there
-    SmartPointer<Individual> getBest() {return bestSolution; };
+    SharedPointer<Individual> getBest() {return bestSolution; };
 
     void runIteration();
 
@@ -27,24 +27,25 @@ public:
 
     bool isFinished();
 
-    int getCurrentIteration();
+    int getCurrentIteration() const {return currentIteration;};
+
+    int getSeed() const {return seed;}
 
 private:
 
     void createGenome(vector<int>& genome);
-    Individual* initializeIndividual();
+    UniquePointer<Individual> initializeIndividual();
 
     bool shouldPerformCrossover();
 
     void replicate();
     void mutate();
-
-    void destroy(vector<Individual*>& pop);
+    void findBestSolution();
 
     vector<Individual*> selectParents();
 
-    SmartPointer<Problem> problem;
-    SmartPointer<Individual> bestSolution;
+    SharedPointer<Problem> problem;
+    SharedPointer<Individual> bestSolution;
 
     int iterations;
     int currentIteration;
@@ -54,7 +55,7 @@ private:
 
     int seed;
 
-    vector<Individual*> population;
+    vector<UniquePointer<Individual>> population;
 
     std::mt19937 gen;
     std::uniform_real_distribution<double> realDistrib;

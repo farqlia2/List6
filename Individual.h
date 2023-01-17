@@ -2,7 +2,7 @@
 #include "vector"
 #include "KnapsackProblem.h"
 #include "random"
-#include "SmartPointer.h"
+#include "UniquePointer.h"
 
 using namespace std;
 
@@ -11,41 +11,44 @@ using namespace std;
 class Individual
 {
 public:
-    Individual() : seed(DEFAULT_SEED) {};
+    Individual(SharedPointer<Problem>& problem,
+               vector<int>&& genome,
+               int seed = DEFAULT_SEED) : seed(seed), problem(problem), genome(std::move(genome)) {};
+    Individual(const Individual& other) = default;
     virtual ~Individual() = default;
-    explicit Individual(int seed) : seed(seed) {};
 	virtual double getFitness() = 0;
 	virtual void mutate(double mutationRate) = 0;
 	virtual vector<int>* getGenome() = 0;
-    // make arguments vectors?
-	virtual vector<Individual*> crossover(Individual& other) = 0;
-    virtual int getSeed() {return seed;}
+	virtual vector<UniquePointer<Individual>> crossover(Individual& other) = 0;
+    int getSeed() const {return seed;}
 private:
     int seed;
+protected:
+    vector<int> genome;
+    SharedPointer<Problem> problem;
 };
 
 class KnapsackIndividual : public Individual {
 public:
 
-    KnapsackIndividual(SmartPointer<Problem>& problem,
+    KnapsackIndividual(SharedPointer<Problem>& problem,
                        vector<int>&& genome,
-                       int seed = DEFAULT_SEED) : Individual(seed),
-                       problem(problem){
-        this->genome = new vector<int>(std::move(genome));
-        this->mutationDistrib = new uniform_real_distribution<double>(0, 1);
-        this->crossoverDistrib = new uniform_int_distribution<int>(1, (*problem).getLength() - 1);
-        this->generator = new mt19937 (seed);
+                       int seed = DEFAULT_SEED) : Individual(problem, std::move(genome), seed), mutationDistrib(0, 1),
+                       crossoverDistrib(1, (*problem).getLength() - 1),
+                       generator(seed){
     };
 
-    ~KnapsackIndividual() override;
+    explicit KnapsackIndividual(const Individual& other): Individual(other),
+        mutationDistrib(0, 1), crossoverDistrib(1, (*problem).getLength() - 1),
+        generator(other.getSeed()) {};
 
     double getFitness() override;
 
     void mutate(double mutationRate) override;
 
-    vector<int>* getGenome() override { return genome; };
+    vector<int>* getGenome() override { return &genome; };
 
-    vector<Individual*> crossover(Individual& other) override;
+    vector<UniquePointer<Individual>> crossover(Individual& other) override;
 
 private:
 
@@ -56,12 +59,9 @@ private:
 
     int* generateMask();
 
-    vector<int>* genome;
-    SmartPointer<Problem> problem;
-
-    uniform_real_distribution<double>* mutationDistrib;
-    uniform_int_distribution<int>* crossoverDistrib;
-    mt19937* generator;
+    uniform_real_distribution<double> mutationDistrib;
+    uniform_int_distribution<int> crossoverDistrib;
+    mt19937 generator;
 
 };
 

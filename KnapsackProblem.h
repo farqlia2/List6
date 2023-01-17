@@ -6,7 +6,10 @@
 #include "vector"
 #include "Constants.h"
 #include "algorithm"
-#include "SmartPointer.h"
+#include "UniquePointer.h"
+#include "SharedPointer.h"
+#include "Exceptions.h"
+#include <stdexcept>
 
 using namespace std;
 
@@ -18,16 +21,21 @@ class KnapsackProblem : public Problem
 {
 public:
 
-    KnapsackProblem() : weights(SmartPointer<vector<double>>(new vector<double>())),
-                        values(SmartPointer<vector<double>>(new vector<double>())),
-                        capacity(0) {};
+    explicit KnapsackProblem() : weights(SharedPointer<vector<double>>(new vector<double>())),
+                                values(SharedPointer<vector<double>>(new vector<double>())),
+                                capacity(0) {};
+
+    KnapsackProblem(SharedPointer<vector<double>> &weights,
+                    SharedPointer<vector<double>> &values,
+                    double capacity) noexcept(false);
+
     // Enum type for returning error codes
     // Format for reading from file
     // n wmax
     // v1 w1
     // ...
     // vn wn
-    ReturnCodes read(string fileName);
+    void read(string fileName);
 
     /*
     bool validate(vector<double>& weights,
@@ -35,9 +43,7 @@ public:
                   int capacity);
     */
 
-    bool initialize(SmartPointer<vector<double>>& weights,
-                    SmartPointer<vector<double>>& values,
-                    double capacity);
+
 
 	double getFitness(vector<int>& genotype) override;
 
@@ -50,12 +56,14 @@ private:
     bool validateCapacity();
     bool validateLengths();
 
-    bool validate();
+    void validate() noexcept(false);
 
     void clear();
 
-	SmartPointer<vector<double>> weights;
-    SmartPointer<vector<double>> values;
+    bool read(ifstream& file);
+
+	SharedPointer<vector<double>> weights;
+    SharedPointer<vector<double>> values;
 
 	double capacity;
 

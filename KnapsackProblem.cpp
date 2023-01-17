@@ -1,64 +1,62 @@
 #include "KnapsackProblem.h"
 
-ReturnCodes KnapsackProblem::read(string fileName){
+void KnapsackProblem::read(string fileName){
 
     ifstream file(fileName);
     clear();
 
     if (file.is_open()) {
 
-        int nOfElements;
-
-        // tries to read in number of elements and capacity
-        file >> nOfElements >> capacity;
-
-        if (!file) return ReturnCodes::INCORRECT_FORMAT;
-
-        double val, weight;
-
-        while (nOfElements-- > 0 && file){
-
-            file >> val >> weight;
-            (*values).push_back(val);
-            (*weights).push_back(weight);
-
-        }
-
-        if (!file) return ReturnCodes::INCORRECT_FORMAT;
+        if (!read(file)) throw BadFormattingException("File is badly formatted");
 
         file.close();
 
-        if (validate()) return ReturnCodes::SUCCESS;
+        validate();
 
-        else return ReturnCodes::ILLEGAL_VALUE;
-
-    } else return ReturnCodes::FILE_NOT_FOUND;
+    } else throw IOException("Couldn't open the file");
 
 }
 
-bool KnapsackProblem::initialize(SmartPointer<vector<double>>& weights,
-                                SmartPointer<vector<double>>& values,
-                                double capacity){
-    this->values = values;
-    this->weights = weights;
-    this->capacity = capacity;
+bool KnapsackProblem::read(ifstream& file){
 
-    bool areArgumentsValid = validate();
+    int nOfElements;
 
-    if (!areArgumentsValid) clear();
+    // tries to read in number of elements and capacity
+    file >> nOfElements >> capacity;
 
-    return areArgumentsValid;
+    if (!file) return false;
+
+    double val, weight;
+
+    while (nOfElements-- > 0 && file){
+
+        file >> val >> weight;
+        (*values).push_back(val);
+        (*weights).push_back(weight);
+
+    }
+
+    if (!file) return false;
+    return true;
 }
+
+KnapsackProblem::KnapsackProblem(SharedPointer<vector<double>> &weights, SharedPointer<vector<double>> &values,
+                                 double capacity) : values(values), weights(weights), capacity(capacity) {
+    validate();
+}
+
 
 void KnapsackProblem::clear(){
     this->capacity = 0;
-    this->weights = SmartPointer<vector<double>>(new vector<double>());
-    this->values = SmartPointer<vector<double>>(new vector<double>());
+    this->weights = SharedPointer<vector<double>>(new vector<double>());
+    this->values = SharedPointer<vector<double>>(new vector<double>());
 }
 
-bool KnapsackProblem::validate(){
-    return validateCapacity() && validateLengths()
-            && validateValues() && validateWeights();
+void KnapsackProblem::validate(){
+    if (!validateCapacity())
+        throw IllegalArgumentException("Weights length and values length should be the same");
+    if (!validateLengths() || !validateValues() || !validateWeights())
+        throw IllegalArgumentException("Weights, values and capacity should be positive");
 }
 
 bool KnapsackProblem::validateWeights() {

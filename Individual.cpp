@@ -2,27 +2,17 @@
 
 double KnapsackIndividual::getFitness()
 {
-    return (*problem).getFitness(*genome);
+    return (*problem).getFitness(genome);
 }
 
 void KnapsackIndividual::mutate(double mutationRate)
 {
-    for (int g = 0; g < genome->size(); g++){
-        if (mutationRate < (*mutationDistrib)(*generator))
-            (*genome)[g] = 1 - (*genome)[g];
+    for (int g = 0; g < genome.size(); g++){
+        if (mutationRate < mutationDistrib(generator))
+            genome[g] = 1 - genome[g];
     }
 }
 
-KnapsackIndividual::~KnapsackIndividual(){
-
-    delete genome;
-    delete mutationDistrib;
-    delete crossoverDistrib;
-    delete generator;
-
-    if (DEBUG)std::cout << "deleting individual\n";
-
-}
 
 vector<int> KnapsackIndividual::exchangeGenes(Individual& p1,
                                               Individual& p2,
@@ -42,7 +32,7 @@ vector<int> KnapsackIndividual::exchangeGenes(Individual& p1,
 int* KnapsackIndividual::generateMask(){
 
     int* mask = new int[(*problem).getLength()];
-    int cutPoint = (*crossoverDistrib)(*generator);
+    int cutPoint = crossoverDistrib(generator);
     int g = 0;
     for (; g < cutPoint; g++) mask[g] = 0;
     for (; g < (*problem).getLength(); g++) mask[g] = 1;
@@ -50,22 +40,18 @@ int* KnapsackIndividual::generateMask(){
 
 }
 
-vector<Individual*> KnapsackIndividual::crossover(Individual& other){
+vector<UniquePointer<Individual>> KnapsackIndividual::crossover(Individual& other){
 
     int genomeLength = (*problem).getLength();
     int* mask = generateMask();
 
-    vector<Individual*> children;
+    vector<UniquePointer<Individual>> children;
+    children.push_back(
+            UniquePointer<Individual>(new KnapsackIndividual(problem, exchangeGenes(*this, other, mask, genomeLength))));
+     children.push_back(
+             UniquePointer<Individual>(new KnapsackIndividual(problem, exchangeGenes(other, *this, mask, genomeLength))));
 
-    KnapsackIndividual* child1 =
-            new KnapsackIndividual(problem, exchangeGenes(*this, other, mask, genomeLength));
-    KnapsackIndividual* child2 =
-            new KnapsackIndividual(problem, exchangeGenes(other, *this, mask, genomeLength));
-
-    children.push_back(child1);
-    children.push_back(child2);
-
-    return std::move(children);
+    return children;
 }
 
 
