@@ -6,8 +6,6 @@
 
 using namespace std;
 
-# define DEFAULT_SEED 0
-
 class Individual
 {
 public:
@@ -18,11 +16,16 @@ public:
                problem(problem), genome(std::move(genome)) {};
 
     Individual(const Individual& other) = default;
+
     virtual ~Individual() = default;
-	double getFitness() { return (*problem).getFitness(genome);};
-	virtual void mutate(double mutationRate) = 0;
+    virtual void computeFitness() {
+        fitness = (*problem).getFitness(genome);
+    };
+    virtual void mutate(double mutationRate) = 0;
+    virtual vector<SharedPointer<Individual>> crossover(Individual& other) = 0;
+
+	double getFitness() const { return fitness;};
     vector<int>* getGenome() { return &genome; };
-	virtual vector<SharedPointer<Individual>> crossover(Individual& other) = 0;
     unsigned int getSeed() const {return seed;}
 
 private:
@@ -30,6 +33,7 @@ private:
 protected:
     vector<int> genome;
     SharedPointer<Problem> problem;
+    double fitness;
 };
 
 class BasicIndividual : public Individual {

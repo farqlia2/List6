@@ -6,12 +6,12 @@
 GeneticAlgorithm::GeneticAlgorithm(SharedPointer<Problem>& problem, SharedPointer<IndividualFactory>& factory,
                                    int iterations, double mutationRate,
                                    double crossoverRate, int populationSize, int tournament, unsigned int seed) :
-                                   problem(problem), factory(factory),
-                                   bestSolution(nullptr), seed(seed), iterations(iterations),
-                                   mutationRate(mutationRate), crossoverRate(crossoverRate),
-                                   currentIteration(0), populationSize(populationSize),
-                                   tournament(tournament),
-                                   gen(seed), realDistrib(0, 1), intDistrib(0, populationSize - 1){
+        problem(problem), individualsFactory(factory),
+        bestSolution(nullptr), seed(seed), iterations(iterations),
+        mutationRate(mutationRate), crossoverRate(crossoverRate),
+        currentIteration(0), populationSize(populationSize),
+        tournament(tournament),
+        gen(seed), realDistrib(0, 1), intDistrib(0, populationSize - 1){
 
     initializePopulation();
 }
@@ -73,7 +73,7 @@ vector<SharedPointer<Individual>> GeneticAlgorithm::tournamentSelection(){
 SharedPointer<Individual> GeneticAlgorithm::initializeIndividual(){
     std::vector<int> genome;
     createGenome(genome);
-    return std::move((*factory).create(problem, std::move(genome), seed));
+    return std::move((*individualsFactory).create(problem, std::move(genome), seed));
 }
 
 
@@ -104,7 +104,7 @@ void GeneticAlgorithm::reproduce(){
         } else {
 
             for (SharedPointer<Individual>& parent : parents)
-                newPopulation.push_back((*factory).copy(parent));
+                newPopulation.push_back((*individualsFactory).copy(parent));
 
         }
     }
@@ -112,11 +112,15 @@ void GeneticAlgorithm::reproduce(){
     population = std::move(newPopulation);
 }
 
-void GeneticAlgorithm::mutate(){
+void GeneticAlgorithm::mutate() {
 
-    for (SharedPointer<Individual>& ind : population)
+    for (SharedPointer<Individual> &ind: population)
         (*ind).mutate(mutationRate);
 
+}
+void GeneticAlgorithm::computeFitness(){
+    for (SharedPointer<Individual> &ind: population)
+        (*ind).computeFitness();
 }
 
 void GeneticAlgorithm::runIteration(){
@@ -124,6 +128,8 @@ void GeneticAlgorithm::runIteration(){
     reproduce();
 
     mutate();
+
+    computeFitness();
 
     findBestSolution();
 
@@ -139,7 +145,7 @@ void GeneticAlgorithm::findBestSolution(){
     }
 
     if (indexOfBestSolution >= 0) {
-        bestSolution = (*factory).copy(population.at(indexOfBestSolution));
+        bestSolution = (*individualsFactory).copy(population.at(indexOfBestSolution));
     }
 }
 

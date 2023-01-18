@@ -12,31 +12,33 @@ ReturnCode KnapsackProblem::read(string& fileName) {
         // tries to read in number of elements and capacity
         file >> nOfElements >> capacity;
 
-        if (file.fail()) return ReturnCode::INCORRECT_FORMAT;
+        if (!file) return ReturnCode::INCORRECT_FORMAT;
 
-        double val, weight;
+        read(file, nOfElements);
 
-        while (nOfElements-- > 0 && file) {
-
-            file >> val >> weight;
-
-            if (file) {
-                (*values).push_back(val);
-                (*weights).push_back(weight);
-            }
-
-        }
         if (!file) return ReturnCode::INCORRECT_FORMAT;
 
         file.close();
 
         if (validate()) return ReturnCode::SUCCESS;
-
         else return ReturnCode::ILLEGAL_VALUE;
 
     } else return ReturnCode::FILE_NOT_FOUND;
 
 }
+
+void KnapsackProblem::read(ifstream& file, int nOfElements){
+
+    double val, weight;
+    while (nOfElements-- > 0 && file) {
+        file >> val >> weight;
+        if (file) {
+            (*values).push_back(val);
+            (*weights).push_back(weight);
+        }
+    }
+}
+
 bool KnapsackProblem::initialize(SharedPointer<vector<double>>& weights,
                                  SharedPointer<vector<double>>& values,
                                      double capacity){
@@ -65,12 +67,16 @@ bool KnapsackProblem::validate(){
 }
 
 bool KnapsackProblem::validateWeights() {
-    return std::all_of((*weights).cbegin(), (*weights).cend(), [](double i){ return i > 0; });
+    return arePositive(*weights);
 };
 bool KnapsackProblem::validateValues(){
-    return std::all_of((*values).cbegin(), (*values).cend(), [](double i){ return i > 0; });
-
+    return arePositive(*values);
 };
+
+bool KnapsackProblem::arePositive(vector<double>& input){
+    return std::all_of(input.cbegin(), input.cend(), [](double i){ return i > 0; });
+}
+
 bool KnapsackProblem::validateCapacity(){
     return capacity > 0;
 };

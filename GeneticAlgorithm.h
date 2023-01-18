@@ -21,17 +21,13 @@ public:
 
     SharedPointer<Individual> getBest() { return bestSolution; };
 
-    vector<SharedPointer<Individual>> getPopulation(){
-        return population;
-    }
-
     void runIteration();
 
     bool isFinished();
 
     int getCurrentIteration() const {return currentIteration;};
 
-    int getSeed() const {return seed;}
+    unsigned int getSeed() const {return seed;}
 
 private:
 
@@ -52,9 +48,11 @@ private:
 
     void mutate();
 
+    void computeFitness();
+
     void findBestSolution();
 
-    SharedPointer<IndividualFactory> factory;
+    SharedPointer<IndividualFactory> individualsFactory;
     SharedPointer<Problem> problem;
     SharedPointer<Individual> bestSolution;
     vector<SharedPointer<Individual>> population;
