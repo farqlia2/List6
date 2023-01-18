@@ -31,6 +31,9 @@ vector<SharedPointer<Individual>> GeneticAlgorithm::selectParents(){
     int parent1 = intDistrib(gen);
     int parent2 = intDistrib(gen);
 
+    while (parent2 == parent1)
+        parent2 = intDistrib(gen);
+
     vector<SharedPointer<Individual>> parents {
         population.at(parent1),
         population.at(parent2)
@@ -68,12 +71,12 @@ void GeneticAlgorithm::reproduce(){
                     (*parents.at(0)).crossover(*parents.at(1));
 
             for (SharedPointer<Individual>& child : children)
-                newPopulation.push_back(child);
+                newPopulation.push_back(std::move(child));
 
         } else {
 
             for (SharedPointer<Individual>& parent : parents)
-                newPopulation.push_back(parent);
+                newPopulation.push_back(SharedPointer<Individual>(new BasicIndividual(*parent)));
 
         }
     }
@@ -107,8 +110,9 @@ void GeneticAlgorithm::findBestSolution(){
         if ((*population.at(i)).getFitness() > (*bestSolution).getFitness()) indexOfBestSolution = i;
     }
 
-    if (indexOfBestSolution >= 0) bestSolution
-    = SharedPointer<Individual>(new BasicIndividual(*population.at(indexOfBestSolution)));
+    if (indexOfBestSolution >= 0) {
+        bestSolution = SharedPointer<Individual>(new BasicIndividual(*population.at(indexOfBestSolution)));
+    }
 }
 
 bool GeneticAlgorithm::isFinished(){

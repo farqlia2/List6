@@ -6,7 +6,6 @@
 #define LIST6_GENETICALGORITHM_H
 #include "Individual.h"
 #include "KnapsackProblem.h"
-#include "StopCondition.h"
 #include <random>
 
 using namespace std;

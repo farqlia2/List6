@@ -14,8 +14,8 @@ class Runner {
 public:
 
     explicit Runner(unsigned int seed = DEFAULT_SEED) : seed(seed) {}
-    virtual bool runAlgorithm(const string& filename) { return false; };
-    virtual bool runAlgorithm() { return true; };
+    virtual void runAlgorithm(const string& filename) {};
+    virtual bool runAlgorithm() { return false; };
 
 protected:
     unsigned int seed;
@@ -33,9 +33,8 @@ public:
                           mutationRate(mutationRate),
                           iterations(iterations) {}
 
-    bool runAlgorithm(const string& fileName) override;
+    void runAlgorithm(const string& fileName) override;
 
-    bool runAlgorithm() override;
 
 private:
     int populationSize;

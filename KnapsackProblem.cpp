@@ -40,8 +40,12 @@ bool KnapsackProblem::read(ifstream& file){
     return true;
 }
 
-KnapsackProblem::KnapsackProblem(SharedPointer<vector<double>> &weights, SharedPointer<vector<double>> &values,
-                                 double capacity) : values(values), weights(weights), capacity(capacity) {
+KnapsackProblem::KnapsackProblem(SharedPointer<vector<double>> &weights,
+                                 SharedPointer<vector<double>> &values,
+                                 double capacity) :
+                                 values(values),
+                                 weights(weights),
+                                 capacity(capacity) {
     validate();
 }
 

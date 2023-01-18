@@ -37,13 +37,14 @@ public:
     BasicIndividual(SharedPointer<Problem>& problem,
                     vector<int>&& genome,
                     int seed = DEFAULT_SEED) : Individual(problem, std::move(genome), seed),
-                                               real0to1Distrib(0, 1),
-                                               int1ToGenomeLengthDistrib(1, (*problem).getLength() - 1),
+                                               realDistrib(0, 1),
+                                               intDistrib(1, (*problem).getLength() - 1),
                                                generator(seed){
     };
 
     explicit BasicIndividual(const Individual& other): Individual(other),
-                                                       real0to1Distrib(0, 1), int1ToGenomeLengthDistrib(1, (*problem).getLength() - 1),
+                                                       realDistrib(0, 1),
+                                                       intDistrib(1, (*problem).getLength() - 1),
                                                        generator(other.getSeed()) {};
 
     void mutate(double mutationRate) override;
@@ -57,11 +58,11 @@ private:
                                      int* mask,
                                      int genomeLength);
 
-    int* generateMask();
+    int* generateOnePointMask();
     int* generateUniformMask();
 
-    uniform_real_distribution<double> real0to1Distrib;
-    uniform_int_distribution<int> int1ToGenomeLengthDistrib;
+    uniform_real_distribution<double> realDistrib;
+    uniform_int_distribution<int> intDistrib;
     mt19937 generator;
 
 };

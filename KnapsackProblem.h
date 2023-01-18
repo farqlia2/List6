@@ -2,7 +2,6 @@
 
 #include <string>
 #include <fstream>
-#include "Problem.h"
 #include "vector"
 #include "Constants.h"
 #include "algorithm"
@@ -10,6 +9,7 @@
 #include "SharedPointer.h"
 #include "Exceptions.h"
 #include <stdexcept>
+#include "Problem.h"
 
 using namespace std;
 /*

@@ -7,6 +7,9 @@
 
 #include <exception>
 #include <utility>
+#include <string>
+
+using namespace std;
 
 class IOException : public std::exception {
 public:

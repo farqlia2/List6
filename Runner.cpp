@@ -8,14 +8,14 @@ string concat(string dir, string fileName){
     return dir + "\\" + fileName;
 }
 
-bool KnapsackProblemRunner::runAlgorithm(const string& fileName) {
+void KnapsackProblemRunner::runAlgorithm(const string& fileName) {
 
     SharedPointer<Problem> problemPointer =
             SharedPointer<Problem>(new KnapsackProblem());
 
     Solution solution;
     if (!solution.read(concat(SOLUTIONS_DIR, fileName)))
-        std::cout << "Couldn't read in optimal solution\n";
+        if (DEBUG) std::cout << "Couldn't read in optimal solution\n";
 
     ofstream resultsFile {concat(RESULTS_DIR, fileName)};
 
@@ -38,15 +38,6 @@ bool KnapsackProblemRunner::runAlgorithm(const string& fileName) {
 
     } catch (exception& exc){
         std::cout << exc.what();
-        return false;
     }
 
-    return true;
-
 }
-
-bool KnapsackProblemRunner::runAlgorithm() {
-
-    return false;
-
-};
