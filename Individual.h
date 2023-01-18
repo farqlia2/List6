@@ -31,20 +31,20 @@ protected:
     SharedPointer<Problem> problem;
 };
 
-class KnapsackIndividual : public Individual {
+class BasicIndividual : public Individual {
 public:
 
-    KnapsackIndividual(SharedPointer<Problem>& problem,
-                       vector<int>&& genome,
-                       int seed = DEFAULT_SEED) : Individual(problem, std::move(genome), seed),
+    BasicIndividual(SharedPointer<Problem>& problem,
+                    vector<int>&& genome,
+                    int seed = DEFAULT_SEED) : Individual(problem, std::move(genome), seed),
                        mutationDistrib(0, 1),
                        crossoverDistrib(1, (*problem).getLength() - 1),
                        generator(seed){
     };
 
-    explicit KnapsackIndividual(const Individual& other): Individual(other),
-        mutationDistrib(0, 1), crossoverDistrib(1, (*problem).getLength() - 1),
-        generator(other.getSeed()) {};
+    explicit BasicIndividual(const Individual& other): Individual(other),
+                                                       mutationDistrib(0, 1), crossoverDistrib(1, (*problem).getLength() - 1),
+                                                       generator(other.getSeed()) {};
 
     void mutate(double mutationRate) override;
 

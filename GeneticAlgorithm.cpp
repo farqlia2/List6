@@ -42,7 +42,7 @@ vector<Individual*> GeneticAlgorithm::selectParents(){
 UniquePointer<Individual> GeneticAlgorithm::initializeIndividual(){
     std::vector<int> genome;
     createGenome(genome);
-    return UniquePointer<Individual>(new KnapsackIndividual(problem, std::move(genome)));
+    return UniquePointer<Individual>(new BasicIndividual(problem, std::move(genome)));
 }
 
 
@@ -51,7 +51,7 @@ void GeneticAlgorithm::initializePopulation(){
     for (int i = 0; i < populationSize; i++){
         population.push_back(initializeIndividual());
     }
-    bestSolution = SharedPointer<Individual>(new KnapsackIndividual(*(initializeIndividual())));
+    bestSolution = SharedPointer<Individual>(new BasicIndividual(*(initializeIndividual())));
 }
 
 void GeneticAlgorithm::replicate(){
@@ -73,7 +73,7 @@ void GeneticAlgorithm::replicate(){
         } else {
 
             for (Individual* parent : parents)
-                newPopulation.push_back(UniquePointer<Individual>(new KnapsackIndividual(*parent)));
+                newPopulation.push_back(UniquePointer<Individual>(new BasicIndividual(*parent)));
 
         }
     }
@@ -108,7 +108,7 @@ void GeneticAlgorithm::findBestSolution(){
     }
 
     if (indexOfBestSolution >= 0) bestSolution =
-            SharedPointer<Individual>(new KnapsackIndividual(*population.at(indexOfBestSolution)));
+            SharedPointer<Individual>(new BasicIndividual(*population.at(indexOfBestSolution)));
 }
 
 bool GeneticAlgorithm::isFinished(){

@@ -129,13 +129,13 @@
   <ItemGroup>
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Individual.h" />
-    <ClInclude Include="KnapsackIndividual.h" />
+    <ClInclude Include="BasicIndividual.h" />
     <ClInclude Include="KnapsackProblem.h" />
     <ClInclude Include="Problem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Individual.cpp" />
-    <ClCompile Include="KnapsackIndividual.cpp" />
+    <ClCompile Include="BasicIndividual.cpp" />
     <ClCompile Include="KnapsackProblem.cpp" />
     <ClCompile Include="Problem.cpp" />
   </ItemGroup>

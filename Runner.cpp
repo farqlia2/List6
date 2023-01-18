@@ -5,7 +5,7 @@
 #include "Runner.h"
 
 string concat(string dir, string fileName){
-    return dir + "//" + fileName + ".txt";
+    return dir + "//" + fileName;
 }
 
 bool KnapsackProblemRunner::runAlgorithm(string& fileName) {
@@ -14,8 +14,8 @@ bool KnapsackProblemRunner::runAlgorithm(string& fileName) {
             SharedPointer<Problem>(new KnapsackProblem());
 
     Solution solution;
-    //if (!solution.read(concat(SOLUTIONS_DIR, fileName)))
-      //  std::cout << "Couldn't read in optimal solution\n";
+    if (!solution.read(concat(SOLUTIONS_DIR, fileName)))
+        std::cout << "Couldn't read in optimal solution\n";
 
     ofstream resultsFile {concat(RESULTS_DIR, fileName)};
 

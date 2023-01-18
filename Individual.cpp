@@ -1,6 +1,6 @@
 #include "Individual.h"
 
-void KnapsackIndividual::mutate(double mutationRate)
+void BasicIndividual::mutate(double mutationRate)
 {
     for (int g = 0; g < genome.size(); g++){
         if (mutationRate < mutationDistrib(generator))
@@ -9,9 +9,9 @@ void KnapsackIndividual::mutate(double mutationRate)
 }
 
 
-vector<int> KnapsackIndividual::exchangeGenes(Individual& p1,
-                                              Individual& p2,
-                                              int* mask, int genomeLength){
+vector<int> BasicIndividual::exchangeGenes(Individual& p1,
+                                           Individual& p2,
+                                           int* mask, int genomeLength){
 
     vector<int> genome;
 
@@ -24,7 +24,7 @@ vector<int> KnapsackIndividual::exchangeGenes(Individual& p1,
 
 }
 
-int* KnapsackIndividual::generateMask(){
+int* BasicIndividual::generateMask(){
 
     int* mask = new int[(*problem).getLength()];
     int cutPoint = crossoverDistrib(generator);
@@ -35,16 +35,16 @@ int* KnapsackIndividual::generateMask(){
 
 }
 
-vector<UniquePointer<Individual>> KnapsackIndividual::crossover(Individual& other){
+vector<UniquePointer<Individual>> BasicIndividual::crossover(Individual& other){
 
     int genomeLength = (*problem).getLength();
     int* mask = generateMask();
 
     vector<UniquePointer<Individual>> children;
     children.push_back(
-            UniquePointer<Individual>(new KnapsackIndividual(problem, exchangeGenes(*this, other, mask, genomeLength))));
+            UniquePointer<Individual>(new BasicIndividual(problem, exchangeGenes(*this, other, mask, genomeLength))));
      children.push_back(
-             UniquePointer<Individual>(new KnapsackIndividual(problem, exchangeGenes(other, *this, mask, genomeLength))));
+             UniquePointer<Individual>(new BasicIndividual(problem, exchangeGenes(other, *this, mask, genomeLength))));
 
     return children;
 }
