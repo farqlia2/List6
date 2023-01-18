@@ -45,7 +45,7 @@ void testReadingInstanceFromFile();
 void testInitializingProblem();
 
 void runProblems(Runner& runner,
-                 vector<string>& problemNames);
+                 const vector<string>& problemNames);
 
 int main(){
 
@@ -61,18 +61,7 @@ int main(){
     KnapsackProblemRunner runner (populationSize, crossoverRate,
                           mutationRate, iterations, seed);
 
-    vector<string> problemNames {"f1_l-d_kp_10_269",
-                                 "f2_l-d_kp_20_878",
-                                 "f3_l-d_kp_4_20",
-                                 "f4_l-d_kp_4_11",
-                                 "f5_l-d_kp_15_375",
-                                 "f6_l-d_kp_10_60",
-                                 "f7_l-d_kp_7_50",
-                                 "f8_l-d_kp_23_10000",
-                                 "f9_l-d_kp_5_80",
-                                 "f10_l-d_kp_20_879"};
-
-    runProblems(runner, problemNames);
+    runProblems(runner, LARGE_PROBLEMS);
 
     std::cout << "Used seed = " << seed << "\n";
 
@@ -82,9 +71,9 @@ int main(){
 }
 
 void runProblems(Runner& runner,
-                 vector<string>& problemNames){
+                 const vector<string>& problemNames){
 
-    for (string& problemName : problemNames){
+    for (const string& problemName : problemNames){
 
         std::cout << "\nRunning Problem = " << problemName << "\n";
 

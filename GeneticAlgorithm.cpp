@@ -42,7 +42,7 @@ vector<SharedPointer<Individual>> GeneticAlgorithm::selectParents(){
 SharedPointer<Individual> GeneticAlgorithm::initializeIndividual(){
     std::vector<int> genome;
     createGenome(genome);
-    return SharedPointer<Individual>(new BasicIndividual(problem, std::move(genome)));
+    return std::move(SharedPointer<Individual>(new BasicIndividual(problem, std::move(genome))));
 }
 
 
@@ -54,7 +54,7 @@ void GeneticAlgorithm::initializePopulation(){
     bestSolution = initializeIndividual();
 }
 
-void GeneticAlgorithm::replicate(){
+void GeneticAlgorithm::reproduce(){
 
     vector<SharedPointer<Individual>> newPopulation;
 
@@ -64,11 +64,11 @@ void GeneticAlgorithm::replicate(){
 
         if (shouldPerformCrossover()){
 
-            vector<UniquePointer<Individual>> children =
+            vector<SharedPointer<Individual>> children =
                     (*parents.at(0)).crossover(*parents.at(1));
 
-            for (UniquePointer<Individual>& child : children)
-                newPopulation.emplace_back(&child);
+            for (SharedPointer<Individual>& child : children)
+                newPopulation.push_back(child);
 
         } else {
 
@@ -90,7 +90,7 @@ void GeneticAlgorithm::mutate(){
 
 void GeneticAlgorithm::runIteration(){
 
-    replicate();
+    reproduce();
 
     mutate();
 
@@ -107,7 +107,8 @@ void GeneticAlgorithm::findBestSolution(){
         if ((*population.at(i)).getFitness() > (*bestSolution).getFitness()) indexOfBestSolution = i;
     }
 
-    if (indexOfBestSolution >= 0) bestSolution = population.at(indexOfBestSolution);
+    if (indexOfBestSolution >= 0) bestSolution
+    = SharedPointer<Individual>(new BasicIndividual(*population.at(indexOfBestSolution)));
 }
 
 bool GeneticAlgorithm::isFinished(){

@@ -22,7 +22,7 @@ public:
 	double getFitness() { return (*problem).getFitness(genome);};
 	virtual void mutate(double mutationRate) = 0;
     vector<int>* getGenome() { return &genome; };
-	virtual vector<UniquePointer<Individual>> crossover(Individual& other) = 0;
+	virtual vector<SharedPointer<Individual>> crossover(Individual& other) = 0;
     int getSeed() const {return seed;}
 private:
     int seed;
@@ -37,18 +37,18 @@ public:
     BasicIndividual(SharedPointer<Problem>& problem,
                     vector<int>&& genome,
                     int seed = DEFAULT_SEED) : Individual(problem, std::move(genome), seed),
-                       mutationDistrib(0, 1),
-                       crossoverDistrib(1, (*problem).getLength() - 1),
-                       generator(seed){
+                                               real0to1Distrib(0, 1),
+                                               int1ToGenomeLengthDistrib(1, (*problem).getLength() - 1),
+                                               generator(seed){
     };
 
     explicit BasicIndividual(const Individual& other): Individual(other),
-                                                       mutationDistrib(0, 1), crossoverDistrib(1, (*problem).getLength() - 1),
+                                                       real0to1Distrib(0, 1), int1ToGenomeLengthDistrib(1, (*problem).getLength() - 1),
                                                        generator(other.getSeed()) {};
 
     void mutate(double mutationRate) override;
 
-    vector<UniquePointer<Individual>> crossover(Individual& other) override;
+    vector<SharedPointer<Individual>> crossover(Individual& other) override;
 
 private:
 
@@ -58,9 +58,10 @@ private:
                                      int genomeLength);
 
     int* generateMask();
+    int* generateUniformMask();
 
-    uniform_real_distribution<double> mutationDistrib;
-    uniform_int_distribution<int> crossoverDistrib;
+    uniform_real_distribution<double> real0to1Distrib;
+    uniform_int_distribution<int> int1ToGenomeLengthDistrib;
     mt19937 generator;
 
 };

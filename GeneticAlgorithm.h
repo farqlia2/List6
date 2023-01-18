@@ -18,7 +18,6 @@ public:
                      double crossoverRate, int populationSize,
                      int seed = DEFAULT_SEED);
 
-    // What type should go there
     SharedPointer<Individual> getBest() { return bestSolution; };
 
     vector<SharedPointer<Individual>> getPopulation(){
@@ -36,33 +35,35 @@ public:
 private:
 
     void createGenome(vector<int>& genome);
+
     SharedPointer<Individual> initializeIndividual();
+
+    vector<SharedPointer<Individual>> selectParents();
 
     bool shouldPerformCrossover();
 
     void initializePopulation();
-    void replicate();
-    void mutate();
-    void findBestSolution();
 
-    vector<SharedPointer<Individual>> selectParents();
+    void reproduce();
+
+    void mutate();
+
+    void findBestSolution();
 
     SharedPointer<Problem> problem;
     SharedPointer<Individual> bestSolution;
+    vector<SharedPointer<Individual>> population;
 
     int iterations;
     int currentIteration;
     double mutationRate;
     double crossoverRate;
     int populationSize;
-
     int seed;
-
-    vector<SharedPointer<Individual>> population;
-
     std::mt19937 gen;
     std::uniform_real_distribution<double> realDistrib;
     std::uniform_int_distribution<int> intDistrib;
+
 };
 
 

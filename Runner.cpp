@@ -5,10 +5,10 @@
 #include "Runner.h"
 
 string concat(string dir, string fileName){
-    return dir + "//" + fileName;
+    return dir + "\\" + fileName;
 }
 
-bool KnapsackProblemRunner::runAlgorithm(string& fileName) {
+bool KnapsackProblemRunner::runAlgorithm(const string& fileName) {
 
     SharedPointer<Problem> problemPointer =
             SharedPointer<Problem>(new KnapsackProblem());

@@ -14,5 +14,5 @@ bool Solution::read(string&& fileName){
     } else {
         return false;
     }
-    return file.fail();
+    return optimalSolution > 1.0;
 }

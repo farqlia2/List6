@@ -14,8 +14,7 @@ template <typename T> class SharedPointer
 public:
     explicit SharedPointer(T* pointer);
     SharedPointer(const SharedPointer<T>& other);
-    SharedPointer(SharedPointer<T>&& other);
-
+    SharedPointer(SharedPointer<T>&& other) noexcept ;
     ~SharedPointer();
 
     SharedPointer<T>& operator=(const SharedPointer<T>& other);
@@ -39,7 +38,7 @@ SharedPointer<T>::SharedPointer(T* pointer) {
 }
 template <typename T>
 void SharedPointer<T>::clear() {
-    if (counter->decr() == 0) {
+    if (counter->decr() <= 0) {
         if (DEBUG) std::cout << "delete entries\n";
         delete pointer;
         delete counter;
@@ -64,12 +63,12 @@ SharedPointer<T>::SharedPointer(const SharedPointer<T>& other){
     copy(other);
 }
 template <typename T>
-SharedPointer<T>::SharedPointer(SharedPointer<T>&& other){
+SharedPointer<T>::SharedPointer(SharedPointer<T>&& other) noexcept{
 
     this->counter = other.counter;
     this->pointer = other.pointer;
-    other.counter = nullptr;
-    other.counter = nullptr;
+    other.counter = new Counter();
+    other.pointer = nullptr;
 
 }
 
