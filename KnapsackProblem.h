@@ -10,13 +10,9 @@
 #include "Exceptions.h"
 #include <stdexcept>
 #include "Problem.h"
+#include "ReturnCode.h"
 
 using namespace std;
-/*
-enum class ReturnCodes: int {
-    SUCCESS, INCORRECT_FORMAT, FILE_NOT_FOUND, ILLEGAL_VALUE
-};
- */
 
 class KnapsackProblem : public Problem
 {
@@ -26,16 +22,15 @@ public:
                                 values(SharedPointer<vector<double>>(new vector<double>())),
                                 capacity(0) {};
 
-    KnapsackProblem(SharedPointer<vector<double>> &weights,
-                    SharedPointer<vector<double>> &values,
-                    double capacity) noexcept(false);
+    ReturnCode read(string& fileName);
 
-    // Format for reading from file
-    // n wmax
-    // v1 w1
-    // ...
-    // vn wn
-    void read(string&& fileName) noexcept(false) override;
+    /*
+    bool validate(vector<double>& weights,
+                  vector<double>& values,
+                  int capacity);*/
+    bool initialize(SharedPointer<vector<double>>& weights,
+                    SharedPointer<vector<double>>& values,
+                    double capacity);
 
 	double getFitness(vector<int>& genotype) override;
 
@@ -48,11 +43,9 @@ private:
     bool validateCapacity();
     bool validateLengths();
 
-    void validate() noexcept(false);
+    bool validate();
 
     void clear();
-
-    bool read(ifstream& file);
 
 	SharedPointer<vector<double>> weights;
     SharedPointer<vector<double>> values;

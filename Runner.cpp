@@ -10,8 +10,7 @@ string concat(string dir, string fileName){
 
 void KnapsackProblemRunner::runAlgorithm(const string& fileName) {
 
-    SharedPointer<Problem> problemPointer =
-            SharedPointer<Problem>(new KnapsackProblem());
+     KnapsackProblem* KProblem = new KnapsackProblem();
 
     Solution solution;
     if (!solution.read(concat(SOLUTIONS_DIR, fileName)))
@@ -19,11 +18,13 @@ void KnapsackProblemRunner::runAlgorithm(const string& fileName) {
 
     ofstream resultsFile {concat(RESULTS_DIR, fileName)};
 
-    try {
+    string instanceFile = concat(INSTANCES_DIR, fileName);
+    ReturnCode code = KProblem->read(instanceFile);
 
-        (*problemPointer).read(concat(INSTANCES_DIR, fileName));
+    if (code == ReturnCode::SUCCESS){
 
-        SharedPointer<IndividualFactory> factory (new BasicIndividualFactory());
+        SharedPointer<IndividualFactory> factory(new BasicIndividualFactory());
+        SharedPointer<Problem> problemPointer(KProblem);
 
         GeneticAlgorithm gA(problemPointer, factory,
                             iterations, mutationRate,
@@ -32,14 +33,15 @@ void KnapsackProblemRunner::runAlgorithm(const string& fileName) {
         while (!gA.isFinished()) {
             gA.runIteration();
             std::cout << "[" << gA.getCurrentIteration() << "] = " <<
-            solution.relativeToOptimal((*gA.getBest()).getFitness()) << "\n";
+                      solution.relativeToOptimal((*gA.getBest()).getFitness()) << "\n";
             resultsFile << solution.relativeToOptimal((*gA.getBest()).getFitness()) << "\n";
         }
 
         resultsFile.close();
-
-    } catch (exception& exc){
-        std::cout << exc.what();
+    } else {
+        std::cout << "Error code = " << "\n";
     }
+
+
 
 }

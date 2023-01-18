@@ -9,7 +9,8 @@ GeneticAlgorithm::GeneticAlgorithm(SharedPointer<Problem>& problem, SharedPointe
                                    problem(problem), factory(factory),
                                    bestSolution(nullptr), seed(seed), iterations(iterations),
                                    mutationRate(mutationRate), crossoverRate(crossoverRate),
-                                   currentIteration(0), populationSize(populationSize), tournament(tournament),
+                                   currentIteration(0), populationSize(populationSize),
+                                   tournament(tournament),
                                    gen(seed), realDistrib(0, 1), intDistrib(0, populationSize - 1){
 
     initializePopulation();

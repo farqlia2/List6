@@ -1,52 +1,55 @@
 #include "KnapsackProblem.h"
 
-void KnapsackProblem::read(string&& fileName){
+ReturnCode KnapsackProblem::read(string& fileName) {
 
     ifstream file(fileName);
     clear();
 
     if (file.is_open()) {
 
-        if (!read(file)) throw BadFormattingException("File is in incorrect format");
+        int nOfElements;
+
+        // tries to read in number of elements and capacity
+        file >> nOfElements >> capacity;
+
+        if (file.fail()) return ReturnCode::INCORRECT_FORMAT;
+
+        double val, weight;
+
+        while (nOfElements-- > 0 && file) {
+
+            file >> val >> weight;
+
+            if (file) {
+                (*values).push_back(val);
+                (*weights).push_back(weight);
+            }
+
+        }
+        if (!file) return ReturnCode::INCORRECT_FORMAT;
 
         file.close();
 
-        validate();
+        if (validate()) return ReturnCode::SUCCESS;
 
-    } else throw IOException("Couldn't open the file");
+        else return ReturnCode::ILLEGAL_VALUE;
+
+    } else return ReturnCode::FILE_NOT_FOUND;
 
 }
+bool KnapsackProblem::initialize(SharedPointer<vector<double>>& weights,
+                                 SharedPointer<vector<double>>& values,
+                                     double capacity){
+    this->values = values;
+    this->weights = weights;
+    this->capacity = capacity;
 
-bool KnapsackProblem::read(ifstream& file){
+    bool areArgumentsValid = validate();
 
-    int nOfElements;
+    if (!areArgumentsValid) clear();
 
-    // tries to read in number of elements and capacity
-    file >> nOfElements >> capacity;
+    return areArgumentsValid;
 
-    if (!file) return false;
-
-    double val, weight;
-
-    while (nOfElements-- > 0 && file){
-
-        file >> val >> weight;
-        (*values).push_back(val);
-        (*weights).push_back(weight);
-
-    }
-
-    if (!file) return false;
-    return true;
-}
-
-KnapsackProblem::KnapsackProblem(SharedPointer<vector<double>> &weights,
-                                 SharedPointer<vector<double>> &values,
-                                 double capacity) :
-                                 values(values),
-                                 weights(weights),
-                                 capacity(capacity) {
-    validate();
 }
 
 
@@ -56,15 +59,9 @@ void KnapsackProblem::clear(){
     this->values = SharedPointer<vector<double>>(new vector<double>());
 }
 
-void KnapsackProblem::validate(){
-    if (!validateLengths())
-        throw IllegalArgumentException("Weights length and values length should be the same");
-    if (!validateCapacity())
-        throw IllegalArgumentException("Capacity should be positive");
-    if (!validateWeights())
-        throw IllegalArgumentException("Weights should be positive");
-    if (!validateValues())
-        throw IllegalArgumentException("Values should be positive");
+bool KnapsackProblem::validate(){
+    return validateCapacity() && validateLengths()
+           && validateValues() && validateWeights();
 }
 
 bool KnapsackProblem::validateWeights() {
