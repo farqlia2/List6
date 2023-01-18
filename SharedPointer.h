@@ -14,6 +14,7 @@ template <typename T> class SharedPointer
 public:
     explicit SharedPointer(T* pointer);
     SharedPointer(const SharedPointer<T>& other);
+    SharedPointer(SharedPointer<T>&& other);
 
     ~SharedPointer();
 
@@ -61,6 +62,15 @@ SharedPointer<T>::~SharedPointer() {
 template <typename T>
 SharedPointer<T>::SharedPointer(const SharedPointer<T>& other){
     copy(other);
+}
+template <typename T>
+SharedPointer<T>::SharedPointer(SharedPointer<T>&& other){
+
+    this->counter = other.counter;
+    this->pointer = other.pointer;
+    other.counter = nullptr;
+    other.counter = nullptr;
+
 }
 
 template <typename T>
