@@ -14,7 +14,7 @@ public:
 
     Individual(SharedPointer<Problem>& problem,
                vector<int>&& genome,
-               int seed = DEFAULT_SEED) : seed(seed),
+               int seed) : seed(seed),
                problem(problem), genome(std::move(genome)) {};
 
     Individual(const Individual& other) = default;
@@ -24,6 +24,7 @@ public:
     vector<int>* getGenome() { return &genome; };
 	virtual vector<SharedPointer<Individual>> crossover(Individual& other) = 0;
     int getSeed() const {return seed;}
+
 private:
     int seed;
 protected:
@@ -36,7 +37,7 @@ public:
 
     BasicIndividual(SharedPointer<Problem>& problem,
                     vector<int>&& genome,
-                    int seed = DEFAULT_SEED) : Individual(problem, std::move(genome), seed),
+                    int seed) : Individual(problem, std::move(genome), seed),
                                                realDistrib(0, 1),
                                                intDistrib(1, (*problem).getLength() - 1),
                                                generator(seed){

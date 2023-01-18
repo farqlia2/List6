@@ -3,14 +3,11 @@
 //
 
 #include <iostream>
-#include <fstream>
 #include "Individual.h"
 #include "Constants.h"
-#include "GeneticAlgorithm.h"
 #include <functional>
 #include "Runner.h"
 #include "Globals.h"
-#include <filesystem>
 
 #include <stdexcept>
 
@@ -26,7 +23,8 @@ void assert_throws(std::function<void(void)>& f, const char* expected_message, c
     try {
         f();
     } catch (exception& exception) {
-        if (std::string (expected_message) != std::string (exception.what())) throw std::runtime_error{"Other exception has been thrown"};
+        if (std::string (expected_message) != std::string (exception.what()))
+            throw std::runtime_error{"Other exception has been thrown"};
         return;
     };
     throw std::runtime_error{message};
@@ -49,6 +47,7 @@ void runProblems(Runner& runner,
 
 int main(){
 
+
     random_device rd;
 
     unsigned int seed = rd();
@@ -61,9 +60,9 @@ int main(){
     KnapsackProblemRunner runner (populationSize, crossoverRate,
                           mutationRate, iterations, seed);
 
-    runProblems(runner, LARGE_PROBLEMS);
+    runProblems(runner, LOW_DIM_PROBLEMS);
 
-    std::cout << "Used seed = " << seed << "\n";
+    std::cout << "Used seed = " << seed << "\n";/**/
 
     //testReadingInstanceFromFile();
     //testInitializingProblem();

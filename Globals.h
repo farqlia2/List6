@@ -7,13 +7,14 @@
 
 # define DEBUG false
 
-#include "string"
+#include <string>
+#include <vector>
 
 const std::string INSTANCES_DIR = R"(C:\Users\julia\CLionProjects\List6_\data)";
 const std::string SOLUTIONS_DIR = R"(C:\Users\julia\CLionProjects\List6_\optimum)";
 const std::string RESULTS_DIR = R"(C:\Users\julia\CLionProjects\List6_\results)";
 
-const vector<string> LOW_DIM_PROBLEMS = {"f1_l-d_kp_10_269",
+const std::vector<std::string> LOW_DIM_PROBLEMS = {"f1_l-d_kp_10_269",
                                    "f2_l-d_kp_20_878",
                                    "f3_l-d_kp_4_20",
                                    "f4_l-d_kp_4_11",
@@ -24,7 +25,7 @@ const vector<string> LOW_DIM_PROBLEMS = {"f1_l-d_kp_10_269",
                                    "f9_l-d_kp_5_80",
                                    "f10_l-d_kp_20_879"};
 
-const vector<string> LARGE_PROBLEMS = {
+const std::vector<std::string> LARGE_PROBLEMS = {
         "knapPI_1_100_1000_1",
         "knapPI_1_200_1000_1",
         "knapPI_2_100_1000_1",

@@ -23,7 +23,9 @@ void KnapsackProblemRunner::runAlgorithm(const string& fileName) {
 
         (*problemPointer).read(concat(INSTANCES_DIR, fileName));
 
-        GeneticAlgorithm gA(problemPointer,
+        SharedPointer<IndividualFactory> factory (new BasicIndividualFactory());
+
+        GeneticAlgorithm gA(problemPointer, factory,
                             iterations, mutationRate,
                             crossoverRate, populationSize, seed);
 

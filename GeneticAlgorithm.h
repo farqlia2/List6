@@ -6,6 +6,7 @@
 #define LIST6_GENETICALGORITHM_H
 #include "Individual.h"
 #include "KnapsackProblem.h"
+#include "IndividualFactory.h"
 #include <random>
 
 using namespace std;
@@ -13,9 +14,10 @@ using namespace std;
 class GeneticAlgorithm {
 public:
     GeneticAlgorithm(SharedPointer<Problem>& problem,
+                     SharedPointer<IndividualFactory>& factory,
                      int iterations, double mutationRate,
                      double crossoverRate, int populationSize,
-                     int seed = DEFAULT_SEED);
+                     unsigned int seed);
 
     SharedPointer<Individual> getBest() { return bestSolution; };
 
@@ -49,6 +51,7 @@ private:
 
     void findBestSolution();
 
+    SharedPointer<IndividualFactory> factory;
     SharedPointer<Problem> problem;
     SharedPointer<Individual> bestSolution;
     vector<SharedPointer<Individual>> population;
@@ -58,7 +61,7 @@ private:
     double mutationRate;
     double crossoverRate;
     int populationSize;
-    int seed;
+    unsigned int seed;
     std::mt19937 gen;
     std::uniform_real_distribution<double> realDistrib;
     std::uniform_int_distribution<int> intDistrib;

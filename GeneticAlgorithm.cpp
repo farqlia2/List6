@@ -3,10 +3,10 @@
 //
 
 #include "GeneticAlgorithm.h"
-GeneticAlgorithm::GeneticAlgorithm(SharedPointer<Problem>& problem,
+GeneticAlgorithm::GeneticAlgorithm(SharedPointer<Problem>& problem, SharedPointer<IndividualFactory>& factory,
                                    int iterations, double mutationRate,
-                                   double crossoverRate, int populationSize, int seed) :
-                                   problem(problem),
+                                   double crossoverRate, int populationSize, unsigned int seed) :
+                                   problem(problem), factory(factory),
                                    bestSolution(nullptr), seed(seed), iterations(iterations),
                                    mutationRate(mutationRate), crossoverRate(crossoverRate),
                                    currentIteration(0), populationSize(populationSize),
@@ -14,6 +14,7 @@ GeneticAlgorithm::GeneticAlgorithm(SharedPointer<Problem>& problem,
 
     initializePopulation();
 }
+
 
 void GeneticAlgorithm::createGenome(vector<int>& genome){
     for (int j = 0; j < (*problem).getLength(); j++) {
@@ -45,7 +46,7 @@ vector<SharedPointer<Individual>> GeneticAlgorithm::selectParents(){
 SharedPointer<Individual> GeneticAlgorithm::initializeIndividual(){
     std::vector<int> genome;
     createGenome(genome);
-    return std::move(SharedPointer<Individual>(new BasicIndividual(problem, std::move(genome))));
+    return std::move((*factory).create(problem, std::move(genome), seed));
 }
 
 
@@ -76,7 +77,7 @@ void GeneticAlgorithm::reproduce(){
         } else {
 
             for (SharedPointer<Individual>& parent : parents)
-                newPopulation.push_back(SharedPointer<Individual>(new BasicIndividual(*parent)));
+                newPopulation.push_back((*factory).create(parent));
 
         }
     }
@@ -111,7 +112,7 @@ void GeneticAlgorithm::findBestSolution(){
     }
 
     if (indexOfBestSolution >= 0) {
-        bestSolution = SharedPointer<Individual>(new BasicIndividual(*population.at(indexOfBestSolution)));
+        bestSolution = (*factory).create(population.at(indexOfBestSolution));
     }
 }
 

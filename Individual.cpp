@@ -54,9 +54,11 @@ vector<SharedPointer<Individual>> BasicIndividual::crossover(Individual& other){
 
     vector<SharedPointer<Individual>> children;
     children.push_back(
-            SharedPointer<Individual>(new BasicIndividual(problem, exchangeGenes(*this, other, mask, genomeLength))));
+            SharedPointer<Individual>(new BasicIndividual(problem,
+                                                          exchangeGenes(*this, other, mask, genomeLength), getSeed())));
      children.push_back(
-             SharedPointer<Individual>(new BasicIndividual(problem, exchangeGenes(other, *this, mask, genomeLength))));
+             SharedPointer<Individual>(new BasicIndividual(problem,
+                                                           exchangeGenes(other, *this, mask, genomeLength), getSeed())));
 
     return children;
 }
