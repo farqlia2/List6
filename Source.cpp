@@ -65,7 +65,7 @@ int main(){
 
     SharedPointer<Runner> runnerPtr = configure();
 
-    //runKnapsackProblems(*runnerPtr, LOW_DIM_PROBLEMS);
+    runKnapsackProblems(*runnerPtr, LOW_DIM_PROBLEMS);
 
     runMaxZeroOneProblems(*runnerPtr, ZERO_ONE_PROBLEMS);
 

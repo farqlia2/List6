@@ -91,7 +91,7 @@ void GeneticAlgorithm::reproduce(){
 
     for (int i = 0; i < populationSize; i+=2){
 
-        vector<SharedPointer<Individual>> parents = uniformSelection();
+        vector<SharedPointer<Individual>> parents = tournamentSelection();
 
         if (shouldPerformCrossover()){
 

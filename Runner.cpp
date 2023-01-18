@@ -36,6 +36,7 @@ void Runner::runAlgorithm(const string& fileName,
         }
 
         resultsFile.close();
+
     } else {
         std::cout << "Error code = " << "\n";
     }
