@@ -4,7 +4,7 @@ void BasicIndividual::mutate(double mutationRate)
 {
     for (int g = 0; g < genome.size(); g++){
         if (mutationRate < realDistrib(generator))
-            genome[g] = ONE - genome[g];
+            genome[g] = 1 - genome[g];
     }
 }
 
@@ -17,7 +17,7 @@ vector<int> BasicIndividual::exchangeGenes(Individual& p1,
 
     for (int g = 0; g < genomeLength; g++){
         genome.push_back(mask[g] * p1.getGenome()->at(g)
-                         + (ONE - mask[g]) * p2.getGenome()->at(g));
+                         + (1 - mask[g]) * p2.getGenome()->at(g));
     }
 
     return std::move(genome);
@@ -29,8 +29,8 @@ int* BasicIndividual::generateOnePointMask(){
     int* mask = new int[(*problem).getLength()];
     int cutPoint = intDistrib(generator);
     int g = 0;
-    for (; g < cutPoint; g++) mask[g] = ZERO;
-    for (; g < (*problem).getLength(); g++) mask[g] = ONE;
+    for (; g < cutPoint; g++) mask[g] = 0;
+    for (; g < (*problem).getLength(); g++) mask[g] = 1;
     return mask;
 
 }

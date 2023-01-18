@@ -32,4 +32,8 @@ const std::vector<std::string> LARGE_PROBLEMS = {
         "knapPI_2_200_1000_1"
 };
 
+const std::vector<std::string> ZERO_ONE_PROBLEMS = {
+        "zero_one_50", "zero_one_100"
+};
+
 #endif //LIST6_GLOBALS_H

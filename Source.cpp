@@ -8,6 +8,7 @@
 #include <functional>
 #include "Runner.h"
 #include "Globals.h"
+#include "MaxOneProblem.h"
 
 #include <stdexcept>
 
@@ -51,16 +52,22 @@ SharedPointer<Runner> configure(int populationSize = 100,
                                 int iterations = 100,
                                 double mutationRate = 0.1,
                                 double crossoverRate = 0.65,
-                                int tournament = 2);
+                                int tournament = 3);
 
-void runProblems(Runner& runner,
-                 const vector<string>& problemNames);
+
+void runKnapsackProblems(Runner& runner,
+                         const vector<string>& problemNames);
+
+void runMaxZeroOneProblems(Runner& runner,
+                           const vector<string>& problemNames);
 
 int main(){
 
     SharedPointer<Runner> runnerPtr = configure();
 
-    runProblems(*runnerPtr, LOW_DIM_PROBLEMS);
+    //runKnapsackProblems(*runnerPtr, LOW_DIM_PROBLEMS);
+
+    runMaxZeroOneProblems(*runnerPtr, ZERO_ONE_PROBLEMS);
 
     std::cout << "Used seed = " << (*runnerPtr).getSeed() << "\n";
 
@@ -76,20 +83,37 @@ SharedPointer<Runner> configure(int populationSize,
 
     unsigned int seed = rd();
 
-    SharedPointer<Runner> runnerPtr (new KnapsackProblemRunner(populationSize, crossoverRate,
+    SharedPointer<Runner> runnerPtr (new Runner(populationSize, crossoverRate,
                                   mutationRate, iterations, tournament, seed));
 
     return std::move(runnerPtr);
 }
 
-void runProblems(Runner& runner,
-                 const vector<string>& problemNames){
+void runMaxZeroOneProblems(Runner& runner,
+                           const vector<string>& problemNames){
 
     for (const string& problemName : problemNames){
 
         std::cout << "\nRunning Problem = " << problemName << "\n";
 
-        runner.runAlgorithm(problemName);
+        SharedPointer<Problem> zeroOneProblem (new MaxOneProblem());
+
+        runner.runAlgorithm(problemName, zeroOneProblem);
+
+    }
+
+}
+
+void runKnapsackProblems(Runner& runner,
+                         const vector<string>& problemNames){
+
+    for (const string& problemName : problemNames){
+
+        std::cout << "\nRunning Problem = " << problemName << "\n";
+
+        SharedPointer<Problem> knapsackProblem (new KnapsackProblem());
+
+        runner.runAlgorithm(problemName, knapsackProblem);
 
     }
 
@@ -136,8 +160,8 @@ void testInitializingProblem(){
 
     std::vector<int> genome {ZERO, ONE, ZERO, ONE};
 
-    cout << problem.getLength() << "\n";
-    cout << problem.getFitness(genome) << "\n";
+    assert_equals(problem.getLength(), 0, "Should return 0 as default length");
+    assert_equals(problem.getFitness(genome), 0.0, "Should return 0 as a fitness value");
 
 }
 

@@ -22,12 +22,8 @@ public:
                                 values(SharedPointer<vector<double>>(new vector<double>())),
                                 capacity(0) {};
 
-    ReturnCode read(string& fileName);
+    ReturnCode read(string& fileName) override;
 
-    /*
-    bool validate(vector<double>& weights,
-                  vector<double>& values,
-                  int capacity);*/
     bool initialize(SharedPointer<vector<double>>& weights,
                     SharedPointer<vector<double>>& values,
                     double capacity);
@@ -44,6 +40,10 @@ private:
     bool validateLengths();
 
     bool validate();
+
+    void read(ifstream& file, int nOfElements);
+
+    static bool arePositive(vector<double>& input);
 
     void clear();
 

@@ -8,9 +8,8 @@ string concat(string dir, string fileName){
     return dir + "\\" + fileName;
 }
 
-void KnapsackProblemRunner::runAlgorithm(const string& fileName) {
-
-     KnapsackProblem* KProblem = new KnapsackProblem();
+void Runner::runAlgorithm(const string& fileName,
+                  SharedPointer<Problem>& problemPointer){
 
     Solution solution;
     if (!solution.read(concat(SOLUTIONS_DIR, fileName)))
@@ -19,12 +18,11 @@ void KnapsackProblemRunner::runAlgorithm(const string& fileName) {
     ofstream resultsFile {concat(RESULTS_DIR, fileName)};
 
     string instanceFile = concat(INSTANCES_DIR, fileName);
-    ReturnCode code = KProblem->read(instanceFile);
+    ReturnCode code = (*problemPointer).read(instanceFile);
 
     if (code == ReturnCode::SUCCESS){
 
         SharedPointer<IndividualFactory> factory(new BasicIndividualFactory());
-        SharedPointer<Problem> problemPointer(KProblem);
 
         GeneticAlgorithm gA(problemPointer, factory,
                             iterations, mutationRate,
@@ -42,6 +40,5 @@ void KnapsackProblemRunner::runAlgorithm(const string& fileName) {
         std::cout << "Error code = " << "\n";
     }
 
-
-
 }
+
