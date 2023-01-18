@@ -34,7 +34,7 @@ SharedPointer<T>::SharedPointer(T* pointer) {
     this->pointer = pointer;
     this->counter = new Counter();
     counter->incr();
-    if (DEBUG) std::cout << "create " << counter->get() << "\n";
+    if (DEBUG) std::cout << "copy " << counter->get() << "\n";
 }
 template <typename T>
 void SharedPointer<T>::clear() {

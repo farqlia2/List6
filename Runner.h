@@ -16,6 +16,7 @@ public:
     explicit Runner(unsigned int seed = DEFAULT_SEED) : seed(seed) {}
     virtual void runAlgorithm(const string& filename) {};
     virtual bool runAlgorithm() { return false; };
+    unsigned int getSeed() const { return seed; }
 
 protected:
     unsigned int seed;
@@ -26,11 +27,12 @@ class KnapsackProblemRunner : public Runner {
 public:
 
     KnapsackProblemRunner(int populationSize, double crossoverRate,
-                          double mutationRate, int iterations,
+                          double mutationRate, int iterations, int tournament,
                           unsigned int seed = DEFAULT_SEED) : Runner(seed),
                           populationSize(populationSize),
                           crossoverRate(crossoverRate),
                           mutationRate(mutationRate),
+                          tournament(tournament),
                           iterations(iterations) {}
 
     void runAlgorithm(const string& fileName) override;
@@ -38,6 +40,7 @@ public:
 
 private:
     int populationSize;
+    int tournament;
     double crossoverRate;
     double mutationRate;
     int iterations;

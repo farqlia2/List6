@@ -5,11 +5,11 @@
 #include "GeneticAlgorithm.h"
 GeneticAlgorithm::GeneticAlgorithm(SharedPointer<Problem>& problem, SharedPointer<IndividualFactory>& factory,
                                    int iterations, double mutationRate,
-                                   double crossoverRate, int populationSize, unsigned int seed) :
+                                   double crossoverRate, int populationSize, int tournament, unsigned int seed) :
                                    problem(problem), factory(factory),
                                    bestSolution(nullptr), seed(seed), iterations(iterations),
                                    mutationRate(mutationRate), crossoverRate(crossoverRate),
-                                   currentIteration(0), populationSize(populationSize),
+                                   currentIteration(0), populationSize(populationSize), tournament(tournament),
                                    gen(seed), realDistrib(0, 1), intDistrib(0, populationSize - 1){
 
     initializePopulation();
@@ -27,7 +27,7 @@ bool GeneticAlgorithm::shouldPerformCrossover(){
     return realDistrib(gen) < crossoverRate;
 }
 
-vector<SharedPointer<Individual>> GeneticAlgorithm::selectParents(){
+vector<SharedPointer<Individual>> GeneticAlgorithm::uniformSelection(){
 
     int parent1 = intDistrib(gen);
     int parent2 = intDistrib(gen);
@@ -41,6 +41,32 @@ vector<SharedPointer<Individual>> GeneticAlgorithm::selectParents(){
     };
 
     return std::move(parents);
+}
+
+SharedPointer<Individual> GeneticAlgorithm::tournamentParentSelection(){
+    vector<int> subgroup;
+
+    for (int i = 0; i < tournament; i++){
+        subgroup.push_back(intDistrib(gen));
+    }
+
+    int bestIndividual = subgroup.at(0);
+    for (int ind : subgroup)
+        if ((*population.at(ind)).getFitness() > (*population.at(bestIndividual)).getFitness())
+            bestIndividual = ind;
+
+    // copy
+    return population.at(bestIndividual);
+}
+
+vector<SharedPointer<Individual>> GeneticAlgorithm::tournamentSelection(){
+
+    SharedPointer<Individual> parent1 (std::move(tournamentParentSelection()));
+    SharedPointer<Individual> parent2 (std::move(tournamentParentSelection()));
+
+    while (&parent2 == &parent1) parent2 = tournamentParentSelection();
+
+    return {std::move(parent1), std::move(parent2)};
 }
 
 SharedPointer<Individual> GeneticAlgorithm::initializeIndividual(){
@@ -64,7 +90,7 @@ void GeneticAlgorithm::reproduce(){
 
     for (int i = 0; i < populationSize; i+=2){
 
-        vector<SharedPointer<Individual>> parents = selectParents();
+        vector<SharedPointer<Individual>> parents = uniformSelection();
 
         if (shouldPerformCrossover()){
 
@@ -77,7 +103,7 @@ void GeneticAlgorithm::reproduce(){
         } else {
 
             for (SharedPointer<Individual>& parent : parents)
-                newPopulation.push_back((*factory).create(parent));
+                newPopulation.push_back((*factory).copy(parent));
 
         }
     }
@@ -112,7 +138,7 @@ void GeneticAlgorithm::findBestSolution(){
     }
 
     if (indexOfBestSolution >= 0) {
-        bestSolution = (*factory).create(population.at(indexOfBestSolution));
+        bestSolution = (*factory).copy(population.at(indexOfBestSolution));
     }
 }
 

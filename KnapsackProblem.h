@@ -30,7 +30,6 @@ public:
                     SharedPointer<vector<double>> &values,
                     double capacity) noexcept(false);
 
-    // Enum type for returning error codes
     // Format for reading from file
     // n wmax
     // v1 w1

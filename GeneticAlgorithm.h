@@ -16,7 +16,7 @@ public:
     GeneticAlgorithm(SharedPointer<Problem>& problem,
                      SharedPointer<IndividualFactory>& factory,
                      int iterations, double mutationRate,
-                     double crossoverRate, int populationSize,
+                     double crossoverRate, int populationSize, int tournament,
                      unsigned int seed);
 
     SharedPointer<Individual> getBest() { return bestSolution; };
@@ -39,7 +39,10 @@ private:
 
     SharedPointer<Individual> initializeIndividual();
 
-    vector<SharedPointer<Individual>> selectParents();
+    vector<SharedPointer<Individual>> uniformSelection();
+
+    SharedPointer<Individual> tournamentParentSelection();
+    vector<SharedPointer<Individual>> tournamentSelection();
 
     bool shouldPerformCrossover();
 
@@ -61,6 +64,7 @@ private:
     double mutationRate;
     double crossoverRate;
     int populationSize;
+    int tournament;
     unsigned int seed;
     std::mt19937 gen;
     std::uniform_real_distribution<double> realDistrib;

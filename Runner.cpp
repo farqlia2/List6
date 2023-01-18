@@ -27,7 +27,7 @@ void KnapsackProblemRunner::runAlgorithm(const string& fileName) {
 
         GeneticAlgorithm gA(problemPointer, factory,
                             iterations, mutationRate,
-                            crossoverRate, populationSize, seed);
+                            crossoverRate, populationSize, tournament, seed);
 
         while (!gA.isFinished()) {
             gA.runIteration();

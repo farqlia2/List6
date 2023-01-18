@@ -7,7 +7,7 @@ void KnapsackProblem::read(string&& fileName){
 
     if (file.is_open()) {
 
-        if (!read(file)) throw BadFormattingException("File is badly formatted");
+        if (!read(file)) throw BadFormattingException("File is in incorrect format");
 
         file.close();
 

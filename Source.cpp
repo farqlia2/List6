@@ -42,31 +42,42 @@ void testReadingInstanceFromFile();
 
 void testInitializingProblem();
 
+void runTests(){
+    testInitializingProblem();
+    testReadingInstanceFromFile();
+}
+
+SharedPointer<Runner> configure(int populationSize = 100,
+                                int iterations = 100,
+                                double mutationRate = 0.1,
+                                double crossoverRate = 0.65,
+                                int tournament = 2);
+
 void runProblems(Runner& runner,
                  const vector<string>& problemNames);
 
 int main(){
 
+    SharedPointer<Runner> runnerPtr = configure();
 
+    runProblems(*runnerPtr, LOW_DIM_PROBLEMS);
+
+    std::cout << "Used seed = " << (*runnerPtr).getSeed() << "\n";
+}
+
+SharedPointer<Runner> configure(int populationSize,
+                                int iterations,
+                                double mutationRate,
+                                double crossoverRate,
+                                int tournament){
     random_device rd;
 
     unsigned int seed = rd();
 
-    int iterations = 100;
-    double mutationRate = 0.1;
-    double crossoverRate = 0.65;
-    int populationSize = 100;
+    SharedPointer<Runner> runnerPtr (new KnapsackProblemRunner(populationSize, crossoverRate,
+                                  mutationRate, iterations, tournament, seed));
 
-    KnapsackProblemRunner runner (populationSize, crossoverRate,
-                          mutationRate, iterations, seed);
-
-    runProblems(runner, LOW_DIM_PROBLEMS);
-
-    std::cout << "Used seed = " << seed << "\n";/**/
-
-    //testReadingInstanceFromFile();
-    //testInitializingProblem();
-
+    return std::move(runnerPtr);
 }
 
 void runProblems(Runner& runner,
@@ -142,18 +153,18 @@ void testReadingInstanceFromFile(){
     fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\incorrect_header.txt");
 
     f = [&problem, &fileName](){ problem.read(std::move(fileName)); };
-    assert_throws(f, "File is badly formatted", "Shouldn't accept file with incorrect header");
+    assert_throws(f, "File is in incorrect format", "Shouldn't accept file with incorrect header");
 
     fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\incorrect_format.txt");
 
     f = [&problem, &fileName](){ problem.read(std::move(fileName)); };
-    assert_throws(f, "File is badly formatted", "Shouldn't accept file with missing values");
+    assert_throws(f, "File is in incorrect format", "Shouldn't accept file with missing values");
 
 
     fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\text_occurence.txt");
 
     f = [&problem, &fileName](){ problem.read(std::move(fileName)); };
-    assert_throws(f, "File is badly formatted", "Shouldn't accept file with non-numeric occurence");
+    assert_throws(f, "File is in incorrect format", "Shouldn't accept file with non-numeric occurence");
 
 
     fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\negative_value.txt");
