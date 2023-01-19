@@ -20,9 +20,9 @@ public:
 
     explicit KnapsackProblem() : weights(SharedPointer<vector<double>>(new vector<double>())),
                                 values(SharedPointer<vector<double>>(new vector<double>())),
-                                capacity(0) {};
+                                capacity(0), genomeLength(0) {};
 
-    ReturnCode read(string& fileName) override;
+    ReturnCode read(std::string& fileName) override;
 
     bool initialize(SharedPointer<vector<double>>& weights,
                     SharedPointer<vector<double>>& values,
@@ -36,14 +36,16 @@ private:
 
     bool validateWeights();
     bool validateValues();
-    bool validateCapacity();
+    bool validateCapacity() const;
     bool validateLengths();
+    bool validateGenomeLength() const;
 
-    bool validate();
+    bool readHeader(ifstream& file);
+    bool readValuesAndWeights(ifstream& file);
 
-    void read(ifstream& file, int nOfElements);
+    ReturnCode readInstance(std::string& fileName);
 
-    static bool arePositive(vector<double>& input);
+    static bool areValuesPositive(vector<double>& input);
 
     void clear();
 
@@ -51,5 +53,6 @@ private:
     SharedPointer<vector<double>> values;
 
 	double capacity;
+    int genomeLength;
 
 };

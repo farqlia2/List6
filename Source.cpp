@@ -48,6 +48,54 @@ void runTests(){
     testReadingInstanceFromFile();
 }
 
+void readFromFile(){
+
+    string f = "C:\\Users\\julia\\CLionProjects\\List6_\\test_instances\\afile.txt";
+
+    ifstream file {f};
+
+    std::cout << "before reading first two values\n";
+    std::cout << std::boolalpha << "file.is_open() = " << file.is_open() << "\n";
+
+    std::cout << std::boolalpha << "file.fail() = " << file.fail() << "\n";
+
+    std::cout << std::boolalpha << "file.bad() = " << file.bad() << "\n";
+
+    std::cout << std::boolalpha << "file.good() = " << file.good() << "\n";
+
+    std::cout << std::boolalpha << "file.eof() = " << file.eof() << "\n";
+
+    int a, b;
+
+    file >> a >> b;
+
+    std::cout << "after reading first two values\n";
+    std::cout << std::boolalpha << "file.is_open() = " << file.is_open() << "\n";
+
+    std::cout << std::boolalpha << "file.fail() = " << file.fail() << "\n";
+
+    std::cout << std::boolalpha << "file.bad() = " << file.bad() << "\n";
+
+    std::cout << std::boolalpha << "file.good() = " << file.good() << "\n";
+
+    std::cout << std::boolalpha << "file.eof() = " << file.eof() << "\n";
+
+
+    file >> a;
+    std::cout << "after reading second two values\n";
+    std::cout << std::boolalpha << "file.is_open() = " << file.is_open() << "\n";
+
+    std::cout << std::boolalpha << "file.fail() = " << file.fail() << "\n";
+
+    std::cout << std::boolalpha << "file.bad() = " << file.bad() << "\n";
+
+    std::cout << std::boolalpha << "file.good() = " << file.good() << "\n";
+
+    std::cout << std::boolalpha << "file.eof() = " << file.eof() << "\n";
+
+
+}
+
 SharedPointer<Runner> configure(int populationSize = 100,
                                 int iterations = 100,
                                 double mutationRate = 0.1,
@@ -63,13 +111,17 @@ void runMaxZeroOneProblems(Runner& runner,
 
 int main(){
 
-    SharedPointer<Runner> runnerPtr = configure();
+    //readFromFile();
 
-    runKnapsackProblems(*runnerPtr, LOW_DIM_PROBLEMS);
+    runTests();
 
-    runMaxZeroOneProblems(*runnerPtr, ZERO_ONE_PROBLEMS);
+    //SharedPointer<Runner> runnerPtr = configure();
 
-    std::cout << "Used seed = " << (*runnerPtr).getSeed() << "\n";
+    //runKnapsackProblems(*runnerPtr, LOW_DIM_PROBLEMS);
+
+    //runMaxZeroOneProblems(*runnerPtr, ZERO_ONE_PROBLEMS);
+
+    //std::cout << "Used seed = " << (*runnerPtr).getSeed() << "\n";
 
     //runTests();
 }
@@ -158,6 +210,13 @@ void testInitializingProblem(){
     assert_that(!problem.initialize(pointerWeights, pointerValues, capacity),
                 "Initialized object with unequal argument lengths");
 
+    *weights = vector<double>{ 4, 2, 3, 2 };
+    *values = vector<double>{ 5, 1, 4, 3 };
+    capacity = -5;
+
+    assert_that(!problem.initialize(pointerWeights, pointerValues, capacity),
+                "Initialized object with negative capacity");
+
     std::vector<int> genome {ZERO, ONE, ZERO, ONE};
 
     assert_equals(problem.getLength(), 0, "Should return 0 as default length");
@@ -173,7 +232,9 @@ void testReadingInstanceFromFile(){
 
     ReturnCode code = problem.read(fileName);
     assert_that(code == ReturnCode::FILE_NOT_FOUND,
-                "Shouldn't read from non-existing file");
+                "Shouldn't readValuesAndWeights from non-existing file");
+    assert_equals(problem.getLength(), 0, "Length should be zero");
+    assert_equals(problem.getFitness(genome), 0.0, "Should be zero for fitness");
 
 
     fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\incorrect_header.txt");
@@ -181,12 +242,17 @@ void testReadingInstanceFromFile(){
     code = problem.read(fileName);
     assert_that(code == ReturnCode::INCORRECT_FORMAT,
                 "Shouldn't accept file with incorrect header");
+    assert_equals(problem.getLength(), 0, "Length should be zero");
+    assert_equals(problem.getFitness(genome), 0.0, "Should be zero for fitness");
+
 
     fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\incorrect_format.txt");
 
     code = problem.read(fileName);
     assert_that(code == ReturnCode::INCORRECT_FORMAT,
                 "Shouldn't accept file with missing values");
+    assert_equals(problem.getLength(), 0, "Length should be zero");
+    assert_equals(problem.getFitness(genome), 0.0, "Should be zero for fitness");
 
 
     fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\text_occurence.txt");
@@ -194,13 +260,34 @@ void testReadingInstanceFromFile(){
     code = problem.read(fileName);
     assert_that(code == ReturnCode::INCORRECT_FORMAT,
                 "Shouldn't accept file with non-numeric occurence");
+    assert_equals(problem.getLength(), 0, "Length should be zero");
+    assert_equals(problem.getFitness(genome), 0.0, "Should be zero for fitness");
 
 
     fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\negative_value.txt");
 
+
     code = problem.read(fileName);
     assert_that(code == ReturnCode::ILLEGAL_VALUE,
                 "Shouldn't accept file with negative value");
+    assert_equals(problem.getLength(), 0, "Length should be zero");
+    assert_equals(problem.getFitness(genome), 0.0, "Should be zero for fitness");
+
+    fileName = ("C:\\Users\\julia\\CLionProjects\\List6_\\test_instances\\negative_capacity.txt");
+
+    code = problem.read(fileName);
+    assert_that(code == ReturnCode::ILLEGAL_VALUE,
+                "Shouldn't accept file with negative capacity");
+    assert_equals(problem.getLength(), 0, "Length should be zero");
+    assert_equals(problem.getFitness(genome), 0.0, "Should be zero for fitness");
+
+    fileName = ("C:\\Users\\julia\\CLionProjects\\List6_\\test_instances\\negative_genome_length.txt");
+
+    code = problem.read(fileName);
+    assert_that(code == ReturnCode::ILLEGAL_VALUE,
+                "Shouldn't accept file with negative genome length");
+    assert_equals(problem.getLength(), 0, "Length should be zero");
+    assert_equals(problem.getFitness(genome), 0.0, "Should be zero for fitness");
 
 
     fileName = ("C:\\Users\\julia\\source\\repos\\List6\\test_instances\\correct_mock_file.txt");

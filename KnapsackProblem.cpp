@@ -1,42 +1,57 @@
 #include "KnapsackProblem.h"
 
-ReturnCode KnapsackProblem::read(string& fileName) {
+ReturnCode KnapsackProblem::readInstance(std::string& fileName) {
 
     ifstream file(fileName);
     clear();
 
     if (file.is_open()) {
 
-        int nOfElements;
+        if (!readHeader(file)) return ReturnCode::INCORRECT_FORMAT;
 
-        // tries to read in number of elements and capacity
-        file >> nOfElements >> capacity;
+        if (!validateCapacity() || !validateGenomeLength())
+            return ReturnCode::ILLEGAL_VALUE;
 
-        if (!file) return ReturnCode::INCORRECT_FORMAT;
-
-        read(file, nOfElements);
-
-        if (!file) return ReturnCode::INCORRECT_FORMAT;
+        if (!readValuesAndWeights(file)) return ReturnCode::INCORRECT_FORMAT;
 
         file.close();
 
-        if (validate()) return ReturnCode::SUCCESS;
+        if (validateValues() && validateWeights())
+            return ReturnCode::SUCCESS;
+
         else return ReturnCode::ILLEGAL_VALUE;
 
     } else return ReturnCode::FILE_NOT_FOUND;
 
 }
 
-void KnapsackProblem::read(ifstream& file, int nOfElements){
+ReturnCode KnapsackProblem::read(std::string& fileName){
+
+    ReturnCode code = readInstance(fileName);
+
+    if (code != ReturnCode::SUCCESS) {
+        clear();
+    }
+    return code;
+}
+
+bool KnapsackProblem::readHeader(ifstream& file){
+    // tries to readValuesAndWeights in number of elements and capacity
+    file >> genomeLength >> capacity;
+    return file.good();
+}
+
+bool KnapsackProblem::readValuesAndWeights(ifstream& file){
 
     double val, weight;
-    while (nOfElements-- > 0 && file) {
+
+    for (int line = 0; line < genomeLength; line++){
         file >> val >> weight;
-        if (file) {
-            (*values).push_back(val);
-            (*weights).push_back(weight);
-        }
+        (*values).push_back(val);
+        (*weights).push_back(weight);
     }
+
+    return !file.fail();
 }
 
 bool KnapsackProblem::initialize(SharedPointer<vector<double>>& weights,
@@ -45,8 +60,10 @@ bool KnapsackProblem::initialize(SharedPointer<vector<double>>& weights,
     this->values = values;
     this->weights = weights;
     this->capacity = capacity;
+    this->genomeLength = (*weights).size();
 
-    bool areArgumentsValid = validate();
+    bool areArgumentsValid = validateLengths() && validateWeights()
+            && validateValues() && validateCapacity();
 
     if (!areArgumentsValid) clear();
 
@@ -57,36 +74,35 @@ bool KnapsackProblem::initialize(SharedPointer<vector<double>>& weights,
 
 void KnapsackProblem::clear(){
     this->capacity = 0;
+    this->genomeLength = 0;
     this->weights = SharedPointer<vector<double>>(new vector<double>());
     this->values = SharedPointer<vector<double>>(new vector<double>());
 }
 
-bool KnapsackProblem::validate(){
-    return validateCapacity() && validateLengths()
-           && validateValues() && validateWeights();
-}
-
 bool KnapsackProblem::validateWeights() {
-    return arePositive(*weights);
+    return areValuesPositive(*weights);
 };
 bool KnapsackProblem::validateValues(){
-    return arePositive(*values);
+    return areValuesPositive(*values);
 };
 
-bool KnapsackProblem::arePositive(vector<double>& input){
+bool KnapsackProblem::areValuesPositive(vector<double>& input){
     return std::all_of(input.cbegin(), input.cend(), [](double i){ return i > 0; });
 }
 
-bool KnapsackProblem::validateCapacity(){
+bool KnapsackProblem::validateCapacity() const{
     return capacity > 0;
 };
+
+bool KnapsackProblem::validateGenomeLength() const {
+    return genomeLength > 0;
+}
 
 bool KnapsackProblem::validateLengths(){
     return (*values).size() == (*weights).size();
 }
 
-double KnapsackProblem::getFitness(vector<int>& genotype)
-{
+double KnapsackProblem::getFitness(vector<int>& genotype){
 	double fitness = 0;
 	double weight = 0;
 	for (int g = 0; g < getLength(); g++) {
@@ -98,7 +114,6 @@ double KnapsackProblem::getFitness(vector<int>& genotype)
 	return weight <= capacity ? fitness : 0; 
 }
 
-int KnapsackProblem::getLength()
-{
-	return (*values).size();
+int KnapsackProblem::getLength() {
+	return genomeLength;
 }

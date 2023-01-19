@@ -13,7 +13,7 @@ void Runner::runAlgorithm(const string& fileName,
 
     Solution solution;
     if (!solution.read(concat(SOLUTIONS_DIR, fileName)))
-        if (DEBUG) std::cout << "Couldn't read in optimal solution\n";
+        if (DEBUG) std::cout << "Couldn't readValuesAndWeights in optimal solution\n";
 
     ofstream resultsFile {concat(RESULTS_DIR, fileName)};
 

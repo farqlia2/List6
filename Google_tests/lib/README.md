@@ -161,7 +161,7 @@ or
 When GoogleTest uses pthread, you may need to add flags to your compiler and/or
 linker to select the pthread library, or you'll get link errors. If you use the
 CMake script, this is taken care of for you. If you use your own build script,
-you'll need to read your compiler and linker's manual to figure out what flags
+you'll need to readValuesAndWeights your compiler and linker's manual to figure out what flags
 to add.
 
 ### As a Shared Library (DLL)

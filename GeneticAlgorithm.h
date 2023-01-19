@@ -38,6 +38,7 @@ private:
     vector<SharedPointer<Individual>> uniformSelection();
 
     SharedPointer<Individual> tournamentParentSelection();
+
     vector<SharedPointer<Individual>> tournamentSelection();
 
     bool shouldPerformCrossover();
