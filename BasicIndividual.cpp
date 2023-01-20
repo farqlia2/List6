@@ -8,7 +8,6 @@ void BasicIndividual::createGenome(){
     }
 }
 
-
 void BasicIndividual::mutate(double mutationRate)
 {
     for (int g = 0; g < genome.size(); g++){
@@ -17,6 +16,17 @@ void BasicIndividual::mutate(double mutationRate)
     }
 }
 
+void BasicIndividual::mutate(double mutationRate,
+            SharedPointer<Individual>& other){
+
+    for (int g = 0; g < genome.size(); g++){
+        if (genome.at(g) != (*other).getGenome()->at(g)) {
+            if (mutationRate < realDistrib(*generatorPointer))
+                genome[g] = 1 - genome[g];
+        }
+    }
+
+}
 
 vector<int> BasicIndividual::exchangeGenes(Individual& p1,
                                            Individual& p2,
@@ -44,17 +54,6 @@ vector<int> BasicIndividual::generateOnePointMask(){
 
 }
 
-int* BasicIndividual::generateUniformMask(){
-
-    int* mask = new int[(*problem).getLength()];
-
-    for (int g = 0; g < (*problem).getLength(); g++)
-
-        mask[g] = std::round(realDistrib(*generatorPointer));
-
-    return mask;
-
-}
 
 vector<SharedPointer<Individual>> BasicIndividual::crossover(Individual& other){
 

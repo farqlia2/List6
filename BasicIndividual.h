@@ -33,6 +33,9 @@ public:
 
     void mutate(double mutationRate) override;
 
+    void mutate(double mutationRate,
+                        SharedPointer<Individual>& other) override;
+
     vector<SharedPointer<Individual>> crossover(Individual& other) override;
 
 private:
@@ -43,7 +46,6 @@ private:
                                      int genomeLength);
 
     vector<int> generateOnePointMask();
-    int* generateUniformMask();
 
     void createGenome();
 

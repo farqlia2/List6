@@ -27,6 +27,10 @@ public:
         fitness = (*problem).getFitness(genome);
     };
     virtual void mutate(double mutationRate) = 0;
+
+    virtual void mutate(double mutationRate,
+                        SharedPointer<Individual>& other) {};
+
     virtual vector<SharedPointer<Individual>> crossover(Individual& other) = 0;
 
 	double getFitness() const { return fitness;};

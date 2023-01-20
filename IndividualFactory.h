@@ -20,7 +20,7 @@ class BasicIndividualFactory : public IndividualFactory {
 
 public:
 
-    explicit BasicIndividualFactory(int seed) : generatorPointer(new mt19937(seed)) {};
+    explicit BasicIndividualFactory(unsigned int seed) : generatorPointer(new mt19937(seed)) {};
 
     SharedPointer<Individual> copy(SharedPointer<Individual>& other) override {
         return std::move(SharedPointer<Individual>(new BasicIndividual(*other)));

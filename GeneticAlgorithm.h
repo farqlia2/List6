@@ -33,8 +33,6 @@ private:
 
     SharedPointer<Individual> initializeIndividual();
 
-    vector<SharedPointer<Individual>> uniformSelection();
-
     SharedPointer<Individual> tournamentParentSelection();
 
     vector<SharedPointer<Individual>> tournamentSelection();

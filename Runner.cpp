@@ -34,7 +34,6 @@ void Runner::runAlgorithm(const string& fileName,
             std::cout << "[" << gA.getCurrentIteration() << "] = " <<
                       solution.relativeToOptimal((*gA.getBest()).getFitness()) << "\n";
             resultsFile << solution.relativeToOptimal((*gA.getBest()).getFitness()) << "\n";
-            //showPopulation(gA.getPopulation());
         }
 
         resultsFile.close();
