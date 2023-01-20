@@ -43,64 +43,16 @@ void testReadingInstanceFromFile();
 
 void testInitializingProblem();
 
-void runTests(){
+void runTests() {
     testInitializingProblem();
     testReadingInstanceFromFile();
-}
-
-void readFromFile(){
-
-    string f = "C:\\Users\\julia\\CLionProjects\\List6_\\test_instances\\afile.txt";
-
-    ifstream file {f};
-
-    std::cout << "before reading first two values\n";
-    std::cout << std::boolalpha << "file.is_open() = " << file.is_open() << "\n";
-
-    std::cout << std::boolalpha << "file.fail() = " << file.fail() << "\n";
-
-    std::cout << std::boolalpha << "file.bad() = " << file.bad() << "\n";
-
-    std::cout << std::boolalpha << "file.good() = " << file.good() << "\n";
-
-    std::cout << std::boolalpha << "file.eof() = " << file.eof() << "\n";
-
-    int a, b;
-
-    file >> a >> b;
-
-    std::cout << "after reading first two values\n";
-    std::cout << std::boolalpha << "file.is_open() = " << file.is_open() << "\n";
-
-    std::cout << std::boolalpha << "file.fail() = " << file.fail() << "\n";
-
-    std::cout << std::boolalpha << "file.bad() = " << file.bad() << "\n";
-
-    std::cout << std::boolalpha << "file.good() = " << file.good() << "\n";
-
-    std::cout << std::boolalpha << "file.eof() = " << file.eof() << "\n";
-
-
-    file >> a;
-    std::cout << "after reading second two values\n";
-    std::cout << std::boolalpha << "file.is_open() = " << file.is_open() << "\n";
-
-    std::cout << std::boolalpha << "file.fail() = " << file.fail() << "\n";
-
-    std::cout << std::boolalpha << "file.bad() = " << file.bad() << "\n";
-
-    std::cout << std::boolalpha << "file.good() = " << file.good() << "\n";
-
-    std::cout << std::boolalpha << "file.eof() = " << file.eof() << "\n";
-
-
 }
 
 SharedPointer<Runner> configure(int populationSize = 100,
                                 int iterations = 100,
                                 double mutationRate = 0.1,
                                 double crossoverRate = 0.65,
-                                int tournament = 3);
+                                int tournament = 2);
 
 
 void runKnapsackProblems(Runner& runner,
@@ -113,13 +65,16 @@ int main(){
 
     //readFromFile();
 
-    //runTests();
+    runTests();
 
     SharedPointer<Runner> runnerPtr = configure();
 
     runKnapsackProblems(*runnerPtr, LOW_DIM_PROBLEMS);
 
     runMaxZeroOneProblems(*runnerPtr, ZERO_ONE_PROBLEMS);
+
+    //vector<string> str {"zero_one_8"};
+    //runMaxZeroOneProblems(*runnerPtr, str);
 
     std::cout << "Used seed = " << (*runnerPtr).getSeed() << "\n";
 

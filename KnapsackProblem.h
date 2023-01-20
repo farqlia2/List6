@@ -5,7 +5,6 @@
 #include "vector"
 #include "Constants.h"
 #include "algorithm"
-#include "UniquePointer.h"
 #include "SharedPointer.h"
 #include "Exceptions.h"
 #include <stdexcept>

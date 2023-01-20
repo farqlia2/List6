@@ -4,7 +4,7 @@
 
 #include "Runner.h"
 
-string concat(string dir, string fileName){
+string concat(const string& dir, const string& fileName){
     return dir + "\\" + fileName;
 }
 
@@ -18,6 +18,7 @@ void Runner::runAlgorithm(const string& fileName,
     ofstream resultsFile {concat(RESULTS_DIR, fileName)};
 
     string instanceFile = concat(INSTANCES_DIR, fileName);
+
     ReturnCode code = (*problemPointer).read(instanceFile);
 
     if (code == ReturnCode::SUCCESS){
@@ -33,12 +34,23 @@ void Runner::runAlgorithm(const string& fileName,
             std::cout << "[" << gA.getCurrentIteration() << "] = " <<
                       solution.relativeToOptimal((*gA.getBest()).getFitness()) << "\n";
             resultsFile << solution.relativeToOptimal((*gA.getBest()).getFitness()) << "\n";
+            //showPopulation(gA.getPopulation());
         }
 
         resultsFile.close();
 
     } else {
-        std::cout << "Error code = " << "\n";
+        switch (code) {
+            case ReturnCode::ILLEGAL_VALUE :
+                std::cout << "ReturnCode::ILLEGAL_VALUE\n";
+                break;
+            case ReturnCode::INCORRECT_FORMAT :
+                std::cout << "ReturnCode::INCORRECT_FORMAT\n";
+                break;
+            case ReturnCode::FILE_NOT_FOUND :
+                std::cout << "ReturnCode::FILE_NOT_FOUND\n";
+                break;
+        }
     }
 
 }

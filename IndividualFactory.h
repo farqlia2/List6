@@ -7,7 +7,7 @@
 
 
 #include "SharedPointer.h"
-#include "Individual.h"
+#include "BasicIndividual.h"
 
 class IndividualFactory {
 public:

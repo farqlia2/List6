@@ -15,7 +15,7 @@ public:
 
     explicit Runner(int populationSize, double crossoverRate,
                     double mutationRate, int iterations, int tournament,
-                    unsigned int seed = SEED) : seed(seed),
+                    unsigned int seed) : seed(seed),
                     populationSize(populationSize),
         crossoverRate(crossoverRate),
         mutationRate(mutationRate),
@@ -26,6 +26,15 @@ public:
                       SharedPointer<Problem>& problemPointer);
 
     unsigned int getSeed() const { return seed; }
+
+    void showPopulation(vector<SharedPointer<Individual>>& pop){
+        for (SharedPointer<Individual>& ind : pop){
+            for (int i : *((*ind).getGenome())){
+                std::cout << i << " ";
+            }
+            std::cout << "\n";
+        }
+    }
 
 private:
     unsigned int seed;

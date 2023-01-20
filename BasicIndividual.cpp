@@ -1,4 +1,4 @@
-#include "Individual.h"
+#include "BasicIndividual.h"
 
 void BasicIndividual::createGenome(){
 
@@ -59,7 +59,7 @@ int* BasicIndividual::generateUniformMask(){
 vector<SharedPointer<Individual>> BasicIndividual::crossover(Individual& other){
 
     int genomeLength = (*problem).getLength();
-    int* mask = generateUniformMask();
+    int* mask = generateOnePointMask();
 
     vector<SharedPointer<Individual>> children;
     children.push_back(

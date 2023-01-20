@@ -16,7 +16,8 @@ public:
     GeneticAlgorithm(SharedPointer<Problem>& problem,
                      SharedPointer<IndividualFactory>& factory,
                      int iterations, double mutationRate,
-                     double crossoverRate, int populationSize, int tournament,
+                     double crossoverRate, int populationSize,
+                     int tournament,
                      unsigned int seed);
 
     SharedPointer<Individual> getBest() { return bestSolution; };
@@ -32,7 +33,7 @@ private:
 
     SharedPointer<Individual> initializeIndividual();
 
-    //vector<SharedPointer<Individual>> uniformSelection();
+    vector<SharedPointer<Individual>> uniformSelection();
 
     SharedPointer<Individual> tournamentParentSelection();
 

@@ -21,14 +21,14 @@ bool GeneticAlgorithm::shouldPerformCrossover(){
     return realDistrib(generator) < crossoverRate;
 }
 
-/*
+
 vector<SharedPointer<Individual>> GeneticAlgorithm::uniformSelection(){
 
-    int parent1 = intDistrib(gen);
-    int parent2 = intDistrib(gen);
+    int parent1 = intDistrib(generator);
+    int parent2 = intDistrib(generator);
 
     while (parent2 == parent1)
-        parent2 = intDistrib(gen);
+        parent2 = intDistrib(generator);
 
     vector<SharedPointer<Individual>> parents {
         population.at(parent1),
@@ -36,7 +36,7 @@ vector<SharedPointer<Individual>> GeneticAlgorithm::uniformSelection(){
     };
 
     return std::move(parents);
-}*/
+}
 
 SharedPointer<Individual> GeneticAlgorithm::tournamentParentSelection(){
     vector<int> tournamentGroup;
