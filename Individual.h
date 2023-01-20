@@ -12,8 +12,14 @@ public:
 
     Individual(SharedPointer<Problem>& problem,
                vector<int>&& genome,
-               unsigned int seed) : seed(seed),
-               problem(problem), genome(std::move(genome)) {};
+               SharedPointer<mt19937>& generator) :
+            problem(problem), genome(std::move(genome)), generatorPointer(generator),
+            fitness(0) {};
+
+    explicit Individual(SharedPointer<Problem>& problem,
+                        SharedPointer<mt19937>& generator) :
+            problem(problem), genome(), generatorPointer(generator),
+            fitness(0) {};
 
     Individual(const Individual& other) = default;
 
@@ -26,12 +32,10 @@ public:
 
 	double getFitness() const { return fitness;};
     vector<int>* getGenome() { return &genome; };
-    unsigned int getSeed() const {return seed;}
 
-private:
-    unsigned int seed;
 protected:
     vector<int> genome;
+    SharedPointer<mt19937>& generatorPointer;
     SharedPointer<Problem> problem;
     double fitness;
 };
@@ -41,16 +45,24 @@ public:
 
     BasicIndividual(SharedPointer<Problem>& problem,
                     vector<int>&& genome,
-                    unsigned int seed) : Individual(problem, std::move(genome), seed),
+                    SharedPointer<mt19937>& generator) : Individual(problem, std::move(genome),
+                                                                    generator),
+                                         realDistrib(0, 1),
+                                         intDistrib(1, (*problem).getLength() - 1)
+                                         {
+    }
+
+    BasicIndividual(SharedPointer<Problem>& problem,
+                    SharedPointer<mt19937>& generator) : Individual(problem, generator),
                                                realDistrib(0, 1),
-                                               intDistrib(1, (*problem).getLength() - 1),
-                                               generator(seed){
+                                               intDistrib(1, (*problem).getLength() - 1)
+                                               {
+        createGenome();
     };
 
     explicit BasicIndividual(const Individual& other): Individual(other),
                                                        realDistrib(0, 1),
-                                                       intDistrib(1, (*problem).getLength() - 1),
-                                                       generator(other.getSeed()) {};
+                                                       intDistrib(1, (*problem).getLength() - 1){};
 
     void mutate(double mutationRate) override;
 
@@ -66,9 +78,10 @@ private:
     int* generateOnePointMask();
     int* generateUniformMask();
 
+    void createGenome();
+
     uniform_real_distribution<double> realDistrib;
     uniform_int_distribution<int> intDistrib;
-    mt19937 generator;
 
 };
 

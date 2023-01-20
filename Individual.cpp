@@ -1,9 +1,18 @@
 #include "Individual.h"
 
+void BasicIndividual::createGenome(){
+
+    for (int j = 0; j < (*problem).getLength(); j++) {
+        int gene = (int) std::round(realDistrib(*generatorPointer));
+        genome.push_back(gene);
+    }
+}
+
+
 void BasicIndividual::mutate(double mutationRate)
 {
     for (int g = 0; g < genome.size(); g++){
-        if (mutationRate < realDistrib(generator))
+        if (mutationRate < realDistrib(*generatorPointer))
             genome[g] = 1 - genome[g];
     }
 }
@@ -27,7 +36,7 @@ vector<int> BasicIndividual::exchangeGenes(Individual& p1,
 int* BasicIndividual::generateOnePointMask(){
 
     int* mask = new int[(*problem).getLength()];
-    int cutPoint = intDistrib(generator);
+    int cutPoint = intDistrib(*generatorPointer);
     int g = 0;
     for (; g < cutPoint; g++) mask[g] = 0;
     for (; g < (*problem).getLength(); g++) mask[g] = 1;
@@ -41,7 +50,7 @@ int* BasicIndividual::generateUniformMask(){
 
     for (int g = 0; g < (*problem).getLength(); g++)
 
-        mask[g] = std::round(realDistrib(generator));
+        mask[g] = std::round(realDistrib(*generatorPointer));
 
     return mask;
 
@@ -55,10 +64,10 @@ vector<SharedPointer<Individual>> BasicIndividual::crossover(Individual& other){
     vector<SharedPointer<Individual>> children;
     children.push_back(
             SharedPointer<Individual>(new BasicIndividual(problem,
-                                                          exchangeGenes(*this, other, mask, genomeLength), getSeed())));
+                                                          exchangeGenes(*this, other, mask, genomeLength), generatorPointer)));
      children.push_back(
              SharedPointer<Individual>(new BasicIndividual(problem,
-                                                           exchangeGenes(other, *this, mask, genomeLength), getSeed())));
+                                                           exchangeGenes(other, *this, mask, genomeLength), generatorPointer)));
 
     return children;
 }

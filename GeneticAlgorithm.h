@@ -27,15 +27,12 @@ public:
 
     int getCurrentIteration() const {return currentIteration;};
 
-    unsigned int getSeed() const {return seed;}
 
 private:
 
-    void createGenome(vector<int>& genome);
-
     SharedPointer<Individual> initializeIndividual();
 
-    vector<SharedPointer<Individual>> uniformSelection();
+    //vector<SharedPointer<Individual>> uniformSelection();
 
     SharedPointer<Individual> tournamentParentSelection();
 
@@ -64,8 +61,9 @@ private:
     double crossoverRate;
     int populationSize;
     int tournament;
-    unsigned int seed;
-    std::mt19937 gen;
+
+    mt19937 generator;
+
     std::uniform_real_distribution<double> realDistrib;
     std::uniform_int_distribution<int> intDistrib;
 

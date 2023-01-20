@@ -22,7 +22,7 @@ void Runner::runAlgorithm(const string& fileName,
 
     if (code == ReturnCode::SUCCESS){
 
-        SharedPointer<IndividualFactory> factory(new BasicIndividualFactory());
+        SharedPointer<IndividualFactory> factory(new BasicIndividualFactory(seed));
 
         GeneticAlgorithm gA(problemPointer, factory,
                             iterations, mutationRate,

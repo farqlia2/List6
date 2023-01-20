@@ -113,17 +113,16 @@ int main(){
 
     //readFromFile();
 
-    runTests();
-
-    //SharedPointer<Runner> runnerPtr = configure();
-
-    //runKnapsackProblems(*runnerPtr, LOW_DIM_PROBLEMS);
-
-    //runMaxZeroOneProblems(*runnerPtr, ZERO_ONE_PROBLEMS);
-
-    //std::cout << "Used seed = " << (*runnerPtr).getSeed() << "\n";
-
     //runTests();
+
+    SharedPointer<Runner> runnerPtr = configure();
+
+    runKnapsackProblems(*runnerPtr, LOW_DIM_PROBLEMS);
+
+    runMaxZeroOneProblems(*runnerPtr, ZERO_ONE_PROBLEMS);
+
+    std::cout << "Used seed = " << (*runnerPtr).getSeed() << "\n";
+
 }
 
 SharedPointer<Runner> configure(int populationSize,
@@ -168,7 +167,6 @@ void runKnapsackProblems(Runner& runner,
         runner.runAlgorithm(problemName, knapsackProblem);
 
     }
-
 }
 
 

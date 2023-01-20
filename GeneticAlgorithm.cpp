@@ -7,27 +7,21 @@ GeneticAlgorithm::GeneticAlgorithm(SharedPointer<Problem>& problem, SharedPointe
                                    int iterations, double mutationRate,
                                    double crossoverRate, int populationSize, int tournament, unsigned int seed) :
         problem(problem), individualsFactory(factory),
-        bestSolution(nullptr), seed(seed), iterations(iterations),
+        bestSolution(nullptr), iterations(iterations),
         mutationRate(mutationRate), crossoverRate(crossoverRate),
         currentIteration(0), populationSize(populationSize),
         tournament(tournament),
-        gen(seed), realDistrib(0, 1), intDistrib(0, populationSize - 1){
+        generator(seed), realDistrib(0, 1), intDistrib(0, populationSize - 1){
 
     initializePopulation();
 }
 
 
-void GeneticAlgorithm::createGenome(vector<int>& genome){
-    for (int j = 0; j < (*problem).getLength(); j++) {
-        int gene = (int) std::round(realDistrib(gen));
-        genome.push_back(gene);
-    }
-}
-
 bool GeneticAlgorithm::shouldPerformCrossover(){
-    return realDistrib(gen) < crossoverRate;
+    return realDistrib(generator) < crossoverRate;
 }
 
+/*
 vector<SharedPointer<Individual>> GeneticAlgorithm::uniformSelection(){
 
     int parent1 = intDistrib(gen);
@@ -42,17 +36,17 @@ vector<SharedPointer<Individual>> GeneticAlgorithm::uniformSelection(){
     };
 
     return std::move(parents);
-}
+}*/
 
 SharedPointer<Individual> GeneticAlgorithm::tournamentParentSelection(){
-    vector<int> subgroup;
+    vector<int> tournamentGroup;
 
     for (int i = 0; i < tournament; i++){
-        subgroup.push_back(intDistrib(gen));
+        tournamentGroup.push_back(intDistrib(generator));
     }
 
-    int bestIndividual = subgroup.at(0);
-    for (int ind : subgroup)
+    int bestIndividual = tournamentGroup.at(0);
+    for (int ind : tournamentGroup)
         if ((*population.at(ind)).getFitness() > (*population.at(bestIndividual)).getFitness())
             bestIndividual = ind;
 
@@ -71,9 +65,9 @@ vector<SharedPointer<Individual>> GeneticAlgorithm::tournamentSelection(){
 }
 
 SharedPointer<Individual> GeneticAlgorithm::initializeIndividual(){
-    std::vector<int> genome;
-    createGenome(genome);
-    return std::move((*individualsFactory).create(problem, std::move(genome), seed));
+    SharedPointer<Individual> individual ((*individualsFactory).create(problem));
+    (*individual).computeFitness();
+    return std::move(individual);
 }
 
 

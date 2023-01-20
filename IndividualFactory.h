@@ -13,22 +13,23 @@ class IndividualFactory {
 public:
     virtual ~IndividualFactory() = default;
     virtual SharedPointer<Individual> copy(SharedPointer<Individual>& other) = 0;
-    virtual SharedPointer<Individual> create(SharedPointer<Problem>& problem,
-                                             vector<int>&& genome,
-                                             unsigned int seed) = 0;
+    virtual SharedPointer<Individual> create(SharedPointer<Problem>& problem) = 0;
 };
 
 class BasicIndividualFactory : public IndividualFactory {
 
 public:
+
+    explicit BasicIndividualFactory(int seed) : generatorPointer(new mt19937(seed)) {};
+
     SharedPointer<Individual> copy(SharedPointer<Individual>& other) override {
         return std::move(SharedPointer<Individual>(new BasicIndividual(*other)));
     }
-    SharedPointer<Individual> create(SharedPointer<Problem>& problem,
-                                     vector<int>&& genome,
-                                     unsigned int seed) override {
-        return std::move(SharedPointer<Individual>(new BasicIndividual(problem, std::move(genome), seed)));
+    SharedPointer<Individual> create(SharedPointer<Problem>& problem) override {
+        return std::move(SharedPointer<Individual>(new BasicIndividual(problem, generatorPointer)));
     }
+private:
+    SharedPointer<mt19937> generatorPointer;
 };
 
 
