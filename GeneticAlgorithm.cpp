@@ -82,15 +82,16 @@ void GeneticAlgorithm::initializePopulation(){
 void GeneticAlgorithm::reproduce(){
 
     vector<SharedPointer<Individual>> newPopulation;
+    vector<SharedPointer<Individual>> parents;
+    vector<SharedPointer<Individual>> children;
 
     for (int i = 0; i < populationSize; i+=2){
 
-        vector<SharedPointer<Individual>> parents = tournamentSelection();
+        parents = tournamentSelection();
 
         if (shouldPerformCrossover()){
 
-            vector<SharedPointer<Individual>> children =
-                    (*parents.at(0)).crossover(*parents.at(1));
+            children = (*parents.at(0)).crossover(*parents.at(1));
 
             for (SharedPointer<Individual>& child : children)
                 newPopulation.push_back(std::move(child));

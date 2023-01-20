@@ -20,27 +20,27 @@ void BasicIndividual::mutate(double mutationRate)
 
 vector<int> BasicIndividual::exchangeGenes(Individual& p1,
                                            Individual& p2,
-                                           int* mask, int genomeLength){
+                                           vector<int>& mask, int genomeLength){
 
     vector<int> genome;
 
     for (int g = 0; g < genomeLength; g++){
-        genome.push_back(mask[g] * p1.getGenome()->at(g)
-                         + (1 - mask[g]) * p2.getGenome()->at(g));
+        genome.push_back(mask.at(g)* p1.getGenome()->at(g)
+                         + (1 - mask.at(g)) * p2.getGenome()->at(g));
     }
 
     return std::move(genome);
 
 }
 
-int* BasicIndividual::generateOnePointMask(){
+vector<int> BasicIndividual::generateOnePointMask(){
 
-    int* mask = new int[(*problem).getLength()];
+    vector<int> mask;
     int cutPoint = intDistrib(*generatorPointer);
     int g = 0;
-    for (; g < cutPoint; g++) mask[g] = 0;
-    for (; g < (*problem).getLength(); g++) mask[g] = 1;
-    return mask;
+    for (; g < cutPoint; g++) mask.push_back(0);
+    for (; g < (*problem).getLength(); g++) mask.push_back(1);
+    return std::move(mask);
 
 }
 
@@ -59,7 +59,7 @@ int* BasicIndividual::generateUniformMask(){
 vector<SharedPointer<Individual>> BasicIndividual::crossover(Individual& other){
 
     int genomeLength = (*problem).getLength();
-    int* mask = generateOnePointMask();
+    vector<int> mask = std::move(generateOnePointMask());
 
     vector<SharedPointer<Individual>> children;
     children.push_back(

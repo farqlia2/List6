@@ -39,10 +39,10 @@ private:
 
     static vector<int> exchangeGenes(Individual& p1,
                                      Individual& p2,
-                                     int* mask,
+                                     vector<int>& mask,
                                      int genomeLength);
 
-    int* generateOnePointMask();
+    vector<int> generateOnePointMask();
     int* generateUniformMask();
 
     void createGenome();
